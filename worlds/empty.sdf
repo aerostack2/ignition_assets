@@ -64,12 +64,5 @@
         </visual>
       </link>
     </model>
-
-    <model name="multicopter">
-        <include>
-            <uri>model://quadrotor_base/model.sdf</uri>
-        </include>
-    </model>
-  
   </world>
 </sdf>
