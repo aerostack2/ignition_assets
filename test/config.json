@@ -1,0 +1,11 @@
+{
+    "world": "empty",
+    "0": {
+        "model": "quadrotor_base",
+        "pose": [ 0.0, 0.0, 0.2, 1.57 ]
+    },
+    "1": {
+        "model": "quadrotor_base",
+        "pose": [ 3.0, 0.0, 0.2, 1.57 ]
+    }
+}
