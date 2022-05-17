@@ -1,6 +1,8 @@
 # ignition_assets
 
-Colletion of AS2 Ignition Gazebo assets and scripts.
+Colletion of AS2 Ignition Gazebo assets and scripts. 
+
+Tested on **Ignition Gazebo Fortress**. Make sure to have it [installed](https://gazebosim.org/docs/fortress/install_ubuntu).
 
 ## INDEX
 - [HOW TO RUN](#how-to-run-basic-usage)
