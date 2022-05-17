@@ -61,46 +61,6 @@
         </visual>
       </link>
 
-      <!-- Front payload slot -->
-      <frame name="slot_0">
-        <pose>0.1 0 0.0 0 0 0</pose>
-      </frame>
-
-      <!-- Rear payload slot -->
-      <frame name="slot_1">
-        <pose>-0.12 0 0.0 0 0 -3.14159</pose>
-      </frame>
-
-      <!-- Top payload slot -->
-      <frame name="slot_2">
-        <pose>0.0 0 0.06 0 -1.57 0</pose>
-      </frame>
-
-      <!-- Bottom payload slot -->
-      <frame name="slot_3">
-        <pose>0.07 0 -0.05 0 1.57 0</pose>
-      </frame>
-
-      <!-- Left payload slot -->
-      <frame name="slot_4">
-        <pose>0.0 0.08 0.0 0 0 1.57</pose>
-      </frame>
-
-      <!-- Right payload slot -->
-      <frame name="slot_5">
-        <pose>0.0 -0.08 0.0 0 0 -1.57</pose>
-      </frame>
-
-      <!-- Bottom left payload slot -->
-      <frame name="slot_6">
-        <pose>0.07 0.05 -0.05 0 1.57 0</pose>
-      </frame>
-
-      <!-- Bottom right payload slot -->
-      <frame name="slot_7">
-        <pose>0.07 -0.05 -0.05 0 1.57 0</pose>
-      </frame>
-
       <link name='rotor_0'>
         <pose>0.13 -0.22 0.023 0 -0 0</pose>
         <inertial>
@@ -421,8 +381,7 @@
       <plugin 
         filename="ignition-gazebo-multicopter-motor-model-system"
         name="ignition::gazebo::systems::MulticopterMotorModel">
-        <robotNamespace>
-        </robotNamespace>
+        <robotNamespace>{{ namespace }}</robotNamespace>
         <jointName>rotor_2_joint</jointName>
         <linkName>rotor_2</linkName>
         <turningDirection>cw</turningDirection>
@@ -510,5 +469,8 @@
           </rotor>
         </rotorConfiguration>
       </plugin>
+
+      {{ sensors }}
+      
     </model>
   </sdf>

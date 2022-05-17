@@ -70,13 +70,14 @@ function parse_drone_config() {
 	IFS=$IFS_bak
 }
 
-function spawn_model() {
+function spawn_drone_model() {
     N=$1
     model=$2
     x=$3
     y=$4
     z=$5
     Y=$6
+	sensors=${@:7}  # All next arguments
 	
 	N=${N:=0}
 	model=${model:=""}
@@ -84,6 +85,7 @@ function spawn_model() {
 	y=${y:=$((3*${N}))}
 	z=${z:=0.1}
 	Y=${Y:=0.0}
+	sensors=${sensors:=""}
 
 	if [ "$model" == "" ] || [ "$model" == "none" ]; then
 		echo "empty model, setting iris as default"
@@ -93,7 +95,7 @@ function spawn_model() {
 	target="${model}/${model}.sdf"
 	modelpath="$(get_path ${target} ${IGN_GAZEBO_RESOURCE_PATH})"
     DIR_SCRIPT="${0%/*}"
-    python3 ${DIR_SCRIPT}/jinja_gen.py ${modelpath}/${target}.jinja ${modelpath}/.. --namespace namespace_${N} --output-file /tmp/${model}_${N}.sdf
+    python3 ${DIR_SCRIPT}/jinja_gen.py ${modelpath}/${target}.jinja ${modelpath}/.. --sensors "${sensors}" --output-file /tmp/${model}_${N}.sdf
 
     ros2 run ros_ign_gazebo create -file /tmp/${model}_${N}.sdf -x $x -y $y -z $z -Y $Y
 }
@@ -142,7 +144,7 @@ function spawn_drones() {
 		parse_drone_config ${drones[$n]} drone_array
 		echo Spawn: ${drone_array[*]}
 
-		spawn_model $n ${drone_array[*]}
+		spawn_drone_model $n ${drone_array[*]}
 		n=$(($n + 1))
 	done
 }

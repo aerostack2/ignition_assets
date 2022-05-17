@@ -22,34 +22,35 @@ def str2bool(v):
     else:
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
+
+def get_sensors(sensors_array, env_dir):
+    sensors = ''
+    while sensors_array and sensors_array[0]:
+        name = sensors_array.pop(0)
+        model = sensors_array.pop(0)
+        pose, sensors_array = sensors_array[:3], sensors_array[3:]
+
+        filepath = os.getenv("AEROSTACK2_STACK") + "/simulation/ignition_assets/scripts/sensor_template.xml.jinja"
+        sensor_template = env.get_template(os.path.relpath(filepath, args.env_dir))
+        sensors += sensor_template.render({'name': name,
+                                            'model': model,
+                                            'pose': f'{pose[0]} {pose[1]} {pose[2]} 0 0 0'})
+    return sensors
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('filename', help="file that the sdf file should be generated from")
     parser.add_argument('env_dir')
-    parser.add_argument('--mavlink_tcp_port', default=4560, help="TCP port for PX4 SITL")
-    parser.add_argument('--mavlink_udp_port', default=14560, help="Mavlink UDP port for mavlink access")
-    parser.add_argument('--serial_enabled', default=0, help="Enable Serial device for HITL")
-    parser.add_argument('--serial_device', default="/dev/ttyACM0", help="Serial device for FMU")
-    parser.add_argument('--serial_baudrate', default=921600, help="Baudrate of Serial device for FMU")
-    parser.add_argument('--hil_mode', default=0, help="Enable HIL mode for HITL simulation")
     parser.add_argument('--output-file', help="sdf output file")
     parser.add_argument('--stdout', action='store_true', default=False, help="dump to stdout instead of file")
-    parser.add_argument('--mavlink_id', default=1, help="Mavlink system ID")
-    parser.add_argument('--cam_component_id', default=100, help="Mavlink camera component ID")
-    parser.add_argument('--gst_udp_port', default=5600, help="Gstreamer UDP port for SITL")
-    parser.add_argument('--video_uri', default=5600, help="Mavlink camera URI for SITL")
-    parser.add_argument('--mavlink_cam_udp_port', default=14530, help="Mavlink camera UDP port for SITL")
-    parser.add_argument('--generate_ros_models', default=False, dest='generate_ros_models', type=str2bool,
-                    help="required if generating the agent for usage with ROS nodes, by default false")
     parser.add_argument('--namespace', default=get_namespace(), help="Drone ROS namespace")
+    parser.add_argument('--sensors', default='', help="Drone model sensors")
     args = parser.parse_args()
     env = jinja2.Environment(loader=jinja2.FileSystemLoader(args.env_dir))
     template = env.get_template(os.path.relpath(args.filename, args.env_dir))
 
-    # get ROS version, if generate_ros_models is true.
-    ros_version = 0
-    if args.generate_ros_models:
-        ros_version = os.environ.get('ROS_VERSION')
+    sensors = get_sensors(str(args.sensors).split(sep=' '), args.env_dir)
 
     # create dictionary with useful modules etc.
     try:
@@ -60,19 +61,8 @@ if __name__ == "__main__":
         rospack = None
 
     d = {'np': np, 'rospack': rospack, \
-         'mavlink_tcp_port': args.mavlink_tcp_port, \
-         'mavlink_udp_port': args.mavlink_udp_port, \
-         'serial_enabled': args.serial_enabled, \
-         'serial_device': args.serial_device, \
-         'serial_baudrate': args.serial_baudrate, \
-         'mavlink_id': args.mavlink_id, \
-         'cam_component_id': args.cam_component_id, \
-         'gst_udp_port': args.gst_udp_port, \
-         'video_uri': args.video_uri, \
-         'mavlink_cam_udp_port': args.mavlink_cam_udp_port, \
-         'hil_mode': args.hil_mode, \
-         'ros_version': ros_version, \
-         'namespace': args.namespace}
+         'namespace': args.namespace,
+         'sensors': sensors}
 
     result = template.render(d)
 

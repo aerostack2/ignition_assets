@@ -3,29 +3,16 @@
 import json
 import argparse
 
-def get_x_drone(filepath, n_drone):
-    json_data = open(filepath)
-    data = json.load(json_data)
-    json_data.close()
-    model=data[str(n_drone)]['model']
-    x=data[str(n_drone)]['pose'][0]
-    y=data[str(n_drone)]['pose'][1]
-    z=data[str(n_drone)]['pose'][2]
-    yaw=data[str(n_drone)]['pose'][3]
-    return f"{model}:{x}:{y}:{z}:{yaw}"
+def get_drone(drone):
+    model = drone['model']
+    x, y, z, yaw = drone['pose']
 
-def get_world(filepath):
-    json_data = open(filepath)
-    data = json.load(json_data)
-    json_data.close()
-    return data['world']
+    sensors = ""
+    for sensor_name, sensor in drone['sensors'].items():
+        roll, pitch, yaw = sensor['rotation']
+        sensors += f":{sensor_name}:{sensor['sensor']}:{roll}:{pitch}:{yaw}"
 
-# DEPRECATED
-def get_num_drones(filepath):
-    json_data = open(filepath)
-    data = json.load(json_data)
-    json_data.close()
-    return data['num_drones']
+    return f"{model}:{x}:{y}:{z}:{yaw}{sensors}"
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -33,24 +20,26 @@ if __name__ == "__main__":
     )
 
     parser.add_argument('filepath', type=str, help='Filepath to config file')
-    
     args = parser.parse_args()
     
     try:
-        world = get_world(args.filepath)
-    except (KeyError, FileNotFoundError):
-        world="none"
+        json_data = open(args.filepath)
+        data = json.load(json_data)
+        json_data.close()
+    except FileNotFoundError:
+        print("File not found.")
+        exit(-1)
+
+    try:
+        world = data['world']
+    except KeyError:
+        world = "none"
 
     print(world)
 
-    # num = get_num_drones(args.filepath)
-    # print(num)
-
-    i = 0
-    while True:
+    for drone in data['drones']:
         try:
-            drone = get_x_drone(args.filepath, i)
-            print(drone)
-        except (KeyError, FileNotFoundError):
+            drone_ = get_drone(drone)
+            print(drone_)
+        except KeyError:
             break
-        i += 1
