@@ -58,14 +58,26 @@ Example of a config file:
 ```json
 {
     "world": "empty",
-    "0": {
+    "drones": [
+    {
         "model": "quadrotor_base",
-        "pose": [ 0.0, 0.0, 0.1, 1.57 ]
+        "pose": [ 0.0, 0.0, 0.2, 1.57 ],
+        "sensors": {
+            "front_camera": {
+                "sensor": "hd_camera",
+                "rotation": [ 0.0, 0.0, 0.0 ]
+            },
+            "lidar_0": {
+                "sensor": "3d_lidar",
+                "rotation": [ 0.0, 0.0, 0.0 ]
+            }
+        }
     },
-    "1": {
+    {
         "model": "quadrotor_base",
-        "pose": [ 3.0, 0.0, 0.1, 1.57 ]
+        "pose": [ 3.0, 0.0, 0.2, 1.57 ]
     }
+    ]
 }
 ```
 

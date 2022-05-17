@@ -4,14 +4,42 @@ import json
 import argparse
 
 def get_drone(drone):
-    model = drone['model']
-    x, y, z, yaw = drone['pose']
+    try:
+        model = drone['model']
+    except KeyError as ex:
+        if ex.args[0] != 'model':
+            raise KeyError
+        model = 'none'
+
+    try:
+        x, y, z, yaw = drone['pose']
+    except KeyError as ex:
+        if ex.args[0] != 'pose':
+            raise KeyError
+        x, y, z, yaw = 0, 0, 0, 0
 
     sensors = ""
-    for sensor_name, sensor in drone['sensors'].items():
-        roll, pitch, yaw = sensor['rotation']
-        sensors += f":{sensor_name}:{sensor['sensor']}:{roll}:{pitch}:{yaw}"
+    try:
+        for sensor_name, sensor in drone['sensors'].items():
+            try:
+                sensor_type = sensor['sensor']
+            except KeyError as ex:
+                if ex.args[0] != 'sensor':
+                    raise KeyError
+                continue
 
+            try:
+                roll_s, pitch_s, yaw_s = sensor['rotation']
+            except KeyError as ex:
+                if ex.args[0] != 'rotation':
+                    raise KeyError
+                roll_s, pitch_s, yaw_s = 0, 0, 0
+
+            sensors += f":{sensor_name}:{sensor_type}:{roll_s}:{pitch_s}:{yaw_s}"
+    except KeyError as ex:
+        if (ex.args[0] != 'sensors'):
+            raise KeyError
+        
     return f"{model}:{x}:{y}:{z}:{yaw}{sensors}"
 
 if __name__ == "__main__":
@@ -32,14 +60,22 @@ if __name__ == "__main__":
 
     try:
         world = data['world']
-    except KeyError:
+    except KeyError as ex:
+        if ex.args[0] != 'world':
+            raise KeyError
         world = "none"
 
     print(world)
 
-    for drone in data['drones']:
-        try:
-            drone_ = get_drone(drone)
-            print(drone_)
-        except KeyError:
-            break
+    try:
+        drones = data['drones']
+    except KeyError as ex:
+        if ex.args[0] != 'drones':
+            raise KeyError
+        print("none:0:0:0:0")
+        exit(0)
+
+    for drone in drones:
+        drone_ = get_drone(drone)
+        print(drone_)
+
