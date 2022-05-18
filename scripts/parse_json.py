@@ -29,13 +29,20 @@ def get_drone(drone):
                 continue
 
             try:
+                x_s, y_s, z_s = sensor['position']
+            except KeyError as ex:
+                if ex.args[0] != 'position':
+                    raise KeyError
+                x_s, y_s, z_s = 0, 0, 0
+
+            try:
                 roll_s, pitch_s, yaw_s = sensor['rotation']
             except KeyError as ex:
                 if ex.args[0] != 'rotation':
                     raise KeyError
                 roll_s, pitch_s, yaw_s = 0, 0, 0
 
-            sensors += f":{sensor_name}:{sensor_type}:{roll_s}:{pitch_s}:{yaw_s}"
+            sensors += f":{sensor_name}:{sensor_type}:{x_s}:{y_s}:{z_s}:{roll_s}:{pitch_s}:{yaw_s}"
     except KeyError as ex:
         if (ex.args[0] != 'sensors'):
             raise KeyError

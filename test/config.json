@@ -7,7 +7,7 @@
         "sensors": {
             "front_camera": {
                 "sensor": "hd_camera",
-                "rotation": [ 0.0, 0.0, 0.0 ]
+                "position": [0.1, 0.2, 0.3]
             },
             "lidar_0": {
                 "sensor": "3d_lidar",

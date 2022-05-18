@@ -28,13 +28,13 @@ def get_sensors(sensors_array, env_dir):
     while sensors_array and sensors_array[0]:
         name = sensors_array.pop(0)
         model = sensors_array.pop(0)
-        pose, sensors_array = sensors_array[:3], sensors_array[3:]
+        pose, sensors_array = sensors_array[:6], sensors_array[6:]
 
         filepath = os.getenv("AEROSTACK2_STACK") + "/simulation/ignition_assets/scripts/sensor_template.xml.jinja"
-        sensor_template = env.get_template(os.path.relpath(filepath, args.env_dir))
+        sensor_template = env.get_template(os.path.relpath(filepath, env_dir))
         sensors += sensor_template.render({'name': name,
                                             'model': model,
-                                            'pose': f'{pose[0]} {pose[1]} {pose[2]} 0 0 0'})
+                                            'pose': f'{pose[0]} {pose[1]} {pose[2]} {pose[3]} {pose[4]} {pose[5]}'})
     return sensors
 
 
