@@ -18,13 +18,13 @@ Tested on **Ignition Gazebo Fortress**. Make sure to have it [installed](https:/
 
 Previously setting AS2 environment, simply run:
 ```bash
-${AEROSTACK2_STACK}/simulation/ignition/scripts/run_ign.sh 
+${AEROSTACK2_PATH}/simulation/ignition/scripts/run_ign.sh 
 ```
 
 or using a config file (see [config files](#config-file)) :
 
 ```bash
-${AEROSTACK2_STACK}/simulation/ignition/scripts/run_ign.sh <config-file>
+${AEROSTACK2_PATH/simulation/ignition/scripts/run_ign.sh <config-file>
 ```
 
 This will run for you **ign gazebo server**, spawn an **quadrotor_base model** and open **ign gazebo client** (GUI).

@@ -3,8 +3,8 @@
 DEFAULT_UAV_MODEL="quadrotor_base"
 
 function setup() {
-	AS2_MODELS="${AEROSTACK2_STACK}/simulation/ignition_assets/models"
-	AS2_WORLDS="${AEROSTACK2_STACK}/simulation/ignition_assets/worlds"
+	AS2_MODELS="${AEROSTACK2_PATH}/simulation/ignition_assets/models"
+	AS2_WORLDS="${AEROSTACK2_PATH}/simulation/ignition_assets/worlds"
 
 	export IGN_GAZEBO_RESOURCE_PATH=$IGN_GAZEBO_RESOURCE_PATH:$AS2_MODELS:$AS2_WORLDS
 }
