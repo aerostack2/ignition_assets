@@ -68,7 +68,7 @@ Config file template:
             "<sensor-name>": {              // REQUIRED if sensor is used
                 "sensor": "<sensor-type>",  // REQUIRED if sensor is used
                 "position": [<x>, <y>, <z>], // optional: [0, 0, 0] if empty
-                "orientation": [<yaw>, <pitch>, <roll>], // optional: [0, 0, 0, 0] if empty
+                "orientation": [<yaw>, <pitch>, <roll>], // optional: [0, 0, 0] if empty
             },
             "<sensor-name-2>": {
                 // Second sensor...
@@ -81,6 +81,7 @@ Config file template:
     ]
 }
 ```
+Notice that comments are not available in JSON format and fields between "<" and ">" should be replaced with each value or removed (along with the field) if is not wanted or required.
 
 Example of a valid config file:
 ```json
