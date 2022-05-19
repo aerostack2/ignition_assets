@@ -54,9 +54,35 @@ Previously set needed environment variables before launching the script.
 Using environment variables is though when using only one drone.
 
 ### CONFIG FILE
-Using a config file lets you to set the simulation environment. You can select a world (or none) and attach to it a number of desired drones with desired model and position. Please pay atention to teh format file, otherwise it may fail.
+Using a config file lets you to set the simulation environment. You can select a world (or none) and attach to it a number of desired drones with desired model, position and set of sensors. Please pay atention to the format file, otherwise it may fail.
 
-Example of a config file:
+Config file template:
+```json
+{
+    "world": "<world-name>",                // optional: deafult world if empty
+    "drones": [                             // optional: no drones if empty
+    {
+        "model": "<model-name>",            // optional: default model if empty
+        "pose": [<x>, <y>, <z>, <yaw>],     // optional: [0, 0, 0, 0] if empty
+        "sensors": {                        // optional: no sensors if none
+            "<sensor-name>": {              // REQUIRED if sensor is used
+                "sensor": "<sensor-type>",  // REQUIRED if sensor is used
+                "position": [<x>, <y>, <z>], // optional: [0, 0, 0] if empty
+                "orientation": [<yaw>, <pitch>, <roll>], // optional: [0, 0, 0, 0] if empty
+            },
+            "<sensor-name-2>": {
+                // Second sensor...
+            }
+        }
+    },
+    {
+        // Second drone...
+    }
+    ]
+}
+```
+
+Example of a valid config file:
 ```json
 {
     "world": "empty",
@@ -67,11 +93,11 @@ Example of a config file:
         "sensors": {
             "front_camera": {
                 "sensor": "hd_camera",
-                "rotation": [ 0.0, 0.0, 0.0 ]
+                "rotation": [ 0.0, 0.0, 1.57 ]
             },
             "lidar_0": {
                 "sensor": "3d_lidar",
-                "rotation": [ 0.0, 0.0, 0.0 ]
+                "position": [ 0.0, 0.0, -0.5 ]
             }
         }
     },
