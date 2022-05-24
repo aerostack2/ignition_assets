@@ -32,6 +32,16 @@ This will run for you **ign gazebo server**, spawn an **quadrotor_base model** a
 ## OPTIONS
 Inital configuration aspects as world, drone model, drone pose or adding several drones can be done setting **environment variables** or using a **config file**.
 
+- Run on start:
+    ```bash
+    export RUN_ON_START=1
+    ```
+
+- Verbose mode:
+    ```bash
+    export VERBOSE_SIM=1
+    ```
+
 ### ENV VARS
 Previously set needed environment variables before launching the script.
 
@@ -103,7 +113,7 @@ Example of a valid config file:
         }
     },
     {
-        "model": "quadrotor_base",
+        "model": "hexrotor_base",
         "pose": [ 3.0, 0.0, 0.2, 1.57 ]
     }
     ]

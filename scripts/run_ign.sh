@@ -125,7 +125,7 @@ function start_ign_server() {
 		world_path="empty.sdf"
 	fi
 
-    ign gazebo -s $run_on_start $world_path &
+    ign gazebo -s $run_on_start $verbose $world_path &
 	SERVER_PID=$!
 }
 
@@ -168,6 +168,13 @@ if [[ -n "$RUN_ON_START" ]]; then
 	run_on_start="-r"
 else
 	run_on_start=""
+fi
+
+# VERBOSE OUTPUT
+if [[ -n "$VERBOSE_SIM" ]]; then
+	verbose="-v 4"
+else
+	verbose=""
 fi
 
 setup
