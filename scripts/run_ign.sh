@@ -34,6 +34,9 @@ function get_path() {
 
 function parse_config_script() {
 	pathfile=$1
+	if [[ $pathfile == "none" ]]; then
+		return
+	fi
 
 	DIR_SCRIPT="${0%/*}"
 
@@ -165,6 +168,7 @@ if [ ! -x "$(command -v ign)" ]; then
 fi
 
 config_path="$1"
+config_path=${config:="none"}
 
 # RUN ON START
 if [[ -n "$RUN_ON_START" ]]; then
