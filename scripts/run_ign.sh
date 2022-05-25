@@ -144,6 +144,8 @@ function spawn_drones() {
 	drones=$1
 	num_vehicles=${#drones[@]}
 
+	drones=${drones:="none"}
+
 	n=0
 	while [ $n -lt $num_vehicles ]; do
 		local drone_array=()
@@ -168,7 +170,7 @@ if [ ! -x "$(command -v ign)" ]; then
 fi
 
 config_path="$1"
-config_path=${config:="none"}
+config_path=${config_path:="none"}
 
 # RUN ON START
 if [[ -n "$RUN_ON_START" ]]; then
