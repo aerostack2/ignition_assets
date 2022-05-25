@@ -103,40 +103,6 @@ function spawn_drone_model() {
     ros2 run ros_ign_gazebo create -world ${world_name} -file /tmp/${model}_${N}.sdf -name ${AEROSTACK2_SIMULATION_DRONE_ID::-1}${N} -x $x -y $y -z $z -Y $Y
 }
 
-function start_ign_server() {
-    world=$1
-	world=$(eval echo $world)
-
-	# Check if ENV VAR is set
-	if [ "$world" == "none" ] && [[ -n "$UAV_WORLD" ]]; then
-		world="$UAV_WORLD"
-	fi
-
-	# Check if world file exist, else look for world
-	if [[ -f $world ]]; then
-		world_path="$world"
-	else
-		target="${world}.sdf"
-		world_path="$(get_path ${target} ${IGN_GAZEBO_RESOURCE_PATH})"
-	fi
-
-	# Check if world_path exist, else empty
-	if [[ -d $world_path ]]; then
-		world_path="${world_path}/${target}"
-	else
-		echo "empty world, setting empty.sdf as default"
-		world_path="empty.sdf"
-	fi
-
-    ign gazebo -s $run_on_start $verbose $world_path &
-	SERVER_PID=$!
-}
-
-function start_ign_client() {
-	ign gazebo -g >/dev/null 2>/dev/null
-	CLIENT_PID=$!
-}
-
 function spawn_drones() {
 	drones=$1
 	num_vehicles=${#drones[@]}
@@ -166,20 +132,6 @@ fi
 
 config_path="$1"
 
-# RUN ON START
-if [[ -n "$RUN_ON_START" ]]; then
-	run_on_start="-r"
-else
-	run_on_start=""
-fi
-
-# VERBOSE OUTPUT
-if [[ -n "$VERBOSE_SIM" ]]; then
-	verbose="-v 4"
-else
-	verbose=""
-fi
-
 setup
 
 # Parse config file
@@ -188,11 +140,4 @@ parse_config_script $config_path world_path drones
 echo drones: ${drones[*]}
 echo world_path: $world_path
 
-start_ign_server $world_path
-sleep 1
 spawn_drones $drones
-
-start_ign_client
-
-kill -9 ${SERVER_PID}
-kill -9 ${CLIENT_PID}
