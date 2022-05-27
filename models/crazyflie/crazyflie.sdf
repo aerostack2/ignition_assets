@@ -290,5 +290,47 @@ Copyright (c) 2022 Bitcraze
         name="ignition::gazebo::systems::OdometryPublisher">
         <dimensions>3</dimensions>
       </plugin>
+
+      <!--Multicopter velocity controller-->
+      <plugin
+        filename="ignition-gazebo-multicopter-control-system"
+        name="ignition::gazebo::systems::MulticopterVelocityControl">
+        <robotNamespace>crazyflie</robotNamespace>
+        <commandSubTopic>cmd_vel</commandSubTopic>
+        <motorControlPubTopic>gazebo/command/motor_speed</motorControlPubTopic>
+        <enableSubTopic>enable</enableSubTopic>
+        <comLinkName>crazyflie/body</comLinkName>
+        <velocityGain>1000 1000 5000</velocityGain>
+        <attitudeGain>0.5 0.5 0.5</attitudeGain>
+        <angularRateGain>1.5 1.5 1.5</angularRateGain>
+        <maximumAngularVelocity>3 3 3</maximumAngularVelocity>
+
+        <rotorConfiguration>
+          <rotor>
+            <jointName>crazyflie/m1_joint</jointName>
+            <forceConstant>1.28192e-08</forceConstant>
+            <momentConstant>0.005964552</momentConstant>
+            <direction>1</direction>
+          </rotor>
+          <rotor>
+            <jointName>crazyflie/m2_joint</jointName>
+            <forceConstant>1.28192e-08</forceConstant>
+            <momentConstant>0.005964552</momentConstant>
+            <direction>-1</direction>
+          </rotor>
+          <rotor>
+            <jointName>crazyflie/m3_joint</jointName>
+            <forceConstant>1.28192e-08</forceConstant>
+            <momentConstant>0.005964552</momentConstant>
+            <direction>1</direction>
+          </rotor>
+          <rotor>
+            <jointName>crazyflie/m4_joint</jointName>
+            <forceConstant>1.28192e-08</forceConstant>
+            <momentConstant>0.005964552</momentConstant>
+            <direction>-1</direction>
+          </rotor>
+        </rotorConfiguration>
+      </plugin>
     </model>
 </sdf>
