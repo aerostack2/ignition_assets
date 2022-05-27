@@ -4,7 +4,6 @@ import jinja2
 import argparse
 import os
 import shutil
-import numpy as np
 
 
 def get_namespace():
@@ -23,18 +22,15 @@ def str2bool(v):
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
 
-def get_sensors(sensors_array, env_dir):
-    sensors = ''
+def get_sensors(sensors_array):
+    sensors = []
     while sensors_array and sensors_array[0]:
         name = sensors_array.pop(0)
         model = sensors_array.pop(0)
         pose, sensors_array = sensors_array[:6], sensors_array[6:]
 
-        filepath = os.getenv("AEROSTACK2_PATH") + "/simulation/ignition_assets/scripts/sensor_template.xml.jinja"
-        sensor_template = env.get_template(os.path.relpath(filepath, env_dir))
-        sensors += sensor_template.render({'name': name,
-                                            'model': model,
-                                            'pose': f'{pose[0]} {pose[1]} {pose[2]} {pose[3]} {pose[4]} {pose[5]}'})
+        sensors.append({'name': name, 'model': model,
+                    'pose': f'{pose[0]} {pose[1]} {pose[2]} {pose[3]} {pose[4]} {pose[5]}'})
     return sensors
 
 
@@ -50,20 +46,8 @@ if __name__ == "__main__":
     env = jinja2.Environment(loader=jinja2.FileSystemLoader(args.env_dir))
     template = env.get_template(os.path.relpath(args.filename, args.env_dir))
 
-    sensors = get_sensors(str(args.sensors).split(sep=' '), args.env_dir)
-
-    # create dictionary with useful modules etc.
-    try:
-        import rospkg
-        rospack = rospkg.RosPack()
-    except ImportError:
-        pass
-        rospack = None
-
-    d = {'np': np, 'rospack': rospack, \
-         'namespace': args.namespace,
-         'sensors': sensors}
-
+    sensors = get_sensors(str(args.sensors).split(sep=' '))
+    d = {'namespace': args.namespace, 'sensors': sensors}
     result = template.render(d)
 
     if args.stdout:

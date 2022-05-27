@@ -476,7 +476,21 @@
         <dimensions>3</dimensions>
       </plugin>
 
-      {{ sensors }}
+      {% for sensor in sensors -%}
+      <!-- Payload {{ name }} -->
+      <include>
+        <name>{{ sensor.name }}</name>
+        <uri>model://{{ sensor.model }}</uri>
+        <pose relative_to="base_link">
+          {{ sensor.pose }}
+        </pose>
+      </include>
+
+      <joint name="{{ sensor.name }}_joint" type="fixed">
+        <parent>base_link</parent>
+        <child>{{ sensor.name }}</child>
+      </joint>
+      {% endfor -%}
       
     </model>
   </sdf>
