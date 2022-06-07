@@ -78,7 +78,7 @@ Config file template:
             "<sensor-name>": {              // REQUIRED if sensor is used
                 "sensor": "<sensor-type>",  // REQUIRED if sensor is used
                 "position": [<x>, <y>, <z>], // optional: [0, 0, 0] if empty
-                "orientation": [<yaw>, <pitch>, <roll>], // optional: [0, 0, 0] if empty
+                "rotation": [<yaw>, <pitch>, <roll>], // optional: [0, 0, 0] if empty
             },
             "<sensor-name-2>": {
                 // Second sensor...
