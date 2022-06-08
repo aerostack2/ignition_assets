@@ -341,7 +341,7 @@
       <plugin 
         filename="ignition-gazebo-multicopter-motor-model-system"
         name="ignition::gazebo::systems::MulticopterMotorModel">
-        <robotNamespace>{{ namespace }}</robotNamespace>
+        <robotNamespace>model/{{ namespace }}</robotNamespace>
         <jointName>rotor_0_joint</jointName>
         <linkName>rotor_0</linkName>
         <turningDirection>ccw</turningDirection>
@@ -361,7 +361,7 @@
       <plugin 
         filename="ignition-gazebo-multicopter-motor-model-system"
         name="ignition::gazebo::systems::MulticopterMotorModel">
-        <robotNamespace>{{ namespace }}</robotNamespace>
+        <robotNamespace>model/{{ namespace }}</robotNamespace>
         <jointName>rotor_1_joint</jointName>
         <linkName>rotor_1</linkName>
         <turningDirection>ccw</turningDirection>
@@ -381,7 +381,7 @@
       <plugin 
         filename="ignition-gazebo-multicopter-motor-model-system"
         name="ignition::gazebo::systems::MulticopterMotorModel">
-        <robotNamespace>{{ namespace }}</robotNamespace>
+        <robotNamespace>model/{{ namespace }}</robotNamespace>
         <jointName>rotor_2_joint</jointName>
         <linkName>rotor_2</linkName>
         <turningDirection>cw</turningDirection>
@@ -401,7 +401,7 @@
       <plugin 
         filename="ignition-gazebo-multicopter-motor-model-system"
         name="ignition::gazebo::systems::MulticopterMotorModel">
-        <robotNamespace>{{ namespace }}</robotNamespace>
+        <robotNamespace>model/{{ namespace }}</robotNamespace>
         <jointName>rotor_3_joint</jointName>
         <linkName>rotor_3</linkName>
         <turningDirection>cw</turningDirection>
@@ -422,7 +422,7 @@
       <plugin
         filename="ignition-gazebo-multicopter-control-system"
         name="ignition::gazebo::systems::MulticopterVelocityControl">
-        <robotNamespace>{{ namespace }}</robotNamespace>
+        <robotNamespace>model/{{ namespace }}</robotNamespace>
         <commandSubTopic>cmd_vel</commandSubTopic>
         <motorControlPubTopic>command/motor_speed</motorControlPubTopic>
         <enableSubTopic>velocity_controller/enable</enableSubTopic>
