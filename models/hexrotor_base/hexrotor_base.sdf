@@ -210,51 +210,6 @@
             </sensor>
         </link>
 
-        <!-- gripper mount point -->
-        <frame name="gripper_mount_point">
-          <pose>0.0 0 -0.01 0 1.57 0</pose>
-        </frame>
-
-        <!-- Front payload slot -->
-        <frame name="slot_0">
-          <pose>0.15 0 -0.02 0 0 0</pose>
-        </frame>
-
-        <!-- Rear payload slot -->
-        <frame name="slot_1">
-          <pose>-0.14 0 -0.02 0 0 -3.14159</pose>
-        </frame>
-
-        <!-- Top payload slot -->
-        <frame name="slot_2">
-          <pose>0.0 0 0.09 0 -1.57 0</pose>
-        </frame>
-
-        <!-- Bottom payload slot -->
-        <frame name="slot_3">
-          <pose>0.06 0 -0.04 0 1.57 0</pose>
-        </frame>
-
-        <!-- Left payload slot -->
-        <frame name="slot_4">
-          <pose>0.05 0.10 -0.02 0 0 1.57</pose>
-        </frame>
-
-        <!-- Right payload slot -->
-        <frame name="slot_5">
-          <pose>0.05 -0.10 -0.02 0 0 -1.57</pose>
-        </frame>
-
-        <!-- Bottom left payload slot -->
-        <frame name="slot_6">
-          <pose>0.06 0.05 -0.04 0 1.57 0</pose>
-        </frame>
-
-        <!-- Bottom right payload slot -->
-        <frame name="slot_7">
-          <pose>0.06 -0.05 -0.04 0 1.57 0</pose>
-        </frame>
-
         <link name="rotor_0">
             <pose>0.247 0.1506 0.028 0.087267 0 0.523599</pose>
             <inertial>
