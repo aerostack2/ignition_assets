@@ -67,7 +67,7 @@ Using environment variables is though when using only one drone.
 Using a config file lets you to set the simulation environment. You can select a world (or none) and attach to it a number of desired drones with desired model, position and set of sensors. Please pay atention to the format file, otherwise it may fail.
 
 Config file template:
-```json
+```
 {
     "world": "<world-name>",                // optional: deafult world if empty
     "drones": [                             // optional: no drones if empty
