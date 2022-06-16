@@ -53,11 +53,12 @@ function parse_config_script() {
 
 	if [[ ${#drones_array[@]} -eq 0 ]]; then
 		model=${UAV_MODEL:="none"}
+		name=${UAV_NAME:="none"}
 		x=${UAV_X:="0.0"}
 		y=${UAV_Y:="0.0"}
 		z=${UAV_Z:="0.0"}
 		yaw=${UAV_YAW:="1.57"}
-		drones_array="${model}:${x}:${y}:${z}:${yaw}"
+		drones_array="${model}:${name}:${x}:${y}:${z}:${yaw}"
 	fi
 }
 
@@ -76,14 +77,16 @@ function parse_drone_config() {
 function spawn_drone_model() {
     N=$1
     model=$2
-    x=$3
-    y=$4
-    z=$5
-    Y=$6
-	sensors=${@:7}  # All next arguments
+    name=$3
+    x=$4
+    y=$5
+    z=$6
+    Y=$7
+	sensors=${@:8}  # All next arguments
 	
 	N=${N:=0}
 	model=${model:=""}
+	name=${name:=""}
 	x=${x:=0.0}
 	y=${y:=$((3*${N}))}
 	z=${z:=0.1}
@@ -95,15 +98,20 @@ function spawn_drone_model() {
 		model="$DEFAULT_UAV_MODEL"
 	fi
 
+	if [ "$name" == "" ] || [ "$name" == "none" ]; then
+		name=${AEROSTACK2_SIMULATION_DRONE_ID::-1}${N}
+		echo "empty name, setting ${name} as default"
+	fi
+
 	world_name=${world_path##*/}
 	world_name=${world_name%.*}
 
 	target="${model}/${model}.sdf"
 	modelpath="$(get_path ${target} ${IGN_GAZEBO_RESOURCE_PATH})"
     DIR_SCRIPT="${0%/*}"
-    python3 ${DIR_SCRIPT}/jinja_gen.py ${modelpath}/${target}.jinja ${modelpath}/.. --namespace "${AEROSTACK2_SIMULATION_DRONE_ID::-1}${N}" --sensors "${sensors}" --output-file /tmp/${model}_${N}.sdf
+    python3 ${DIR_SCRIPT}/jinja_gen.py ${modelpath}/${target}.jinja ${modelpath}/.. --namespace "${name}" --sensors "${sensors}" --output-file /tmp/${model}_${N}.sdf
 
-    ros2 run ros_ign_gazebo create -world ${world_name} -file /tmp/${model}_${N}.sdf -name ${AEROSTACK2_SIMULATION_DRONE_ID::-1}${N} -x $x -y $y -z $z -Y $Y
+    ros2 run ros_ign_gazebo create -world ${world_name} -file /tmp/${model}_${N}.sdf -name "${name}" -x $x -y $y -z $z -Y $Y
 }
 
 function start_ign_server() {
