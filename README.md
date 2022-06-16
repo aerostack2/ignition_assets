@@ -73,6 +73,7 @@ Config file template:
     "drones": [                             // optional: no drones if empty
     {
         "model": "<model-name>",            // optional: default model if empty
+        "name": "<namespace>",              // optional: default namespace if empty
         "pose": [<x>, <y>, <z>, <yaw>],     // optional: [0, 0, 0, 0] if empty
         "sensors": {                        // optional: no sensors if none
             "<sensor-name>": {              // REQUIRED if sensor is used
@@ -100,6 +101,7 @@ Example of a valid config file:
     "drones": [
     {
         "model": "quadrotor_base",
+        "name": "drone_sim_0",
         "pose": [ 0.0, 0.0, 0.2, 1.57 ],
         "sensors": {
             "front_camera": {
