@@ -12,6 +12,13 @@ def get_drone(drone):
         model = 'none'
 
     try:
+        name = drone['name']
+    except KeyError as ex:
+        if ex.args[0] != 'name':
+            raise KeyError
+        name = 'none'    
+
+    try:
         x, y, z, yaw = drone['pose']
     except KeyError as ex:
         if ex.args[0] != 'pose':
@@ -47,7 +54,7 @@ def get_drone(drone):
         if (ex.args[0] != 'sensors'):
             raise KeyError
         
-    return f"{model}:{x}:{y}:{z}:{yaw}{sensors}"
+    return f"{model}:{name}:{x}:{y}:{z}:{yaw}{sensors}"
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -79,7 +86,7 @@ if __name__ == "__main__":
     except KeyError as ex:
         if ex.args[0] != 'drones':
             raise KeyError
-        print("none:0:0:0:0")
+        print("none:none:0:0:0:0")
         exit(0)
 
     for drone in drones:

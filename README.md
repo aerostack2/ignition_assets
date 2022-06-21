@@ -67,12 +67,13 @@ Using environment variables is though when using only one drone.
 Using a config file lets you to set the simulation environment. You can select a world (or none) and attach to it a number of desired drones with desired model, position and set of sensors. Please pay atention to the format file, otherwise it may fail.
 
 Config file template:
-```json
+```
 {
     "world": "<world-name>",                // optional: deafult world if empty
     "drones": [                             // optional: no drones if empty
     {
         "model": "<model-name>",            // optional: default model if empty
+        "name": "<namespace>",              // optional: default namespace if empty
         "pose": [<x>, <y>, <z>, <yaw>],     // optional: [0, 0, 0, 0] if empty
         "sensors": {                        // optional: no sensors if none
             "<sensor-name>": {              // REQUIRED if sensor is used
@@ -100,6 +101,7 @@ Example of a valid config file:
     "drones": [
     {
         "model": "quadrotor_base",
+        "name": "drone_sim_0",
         "pose": [ 0.0, 0.0, 0.2, 1.57 ],
         "sensors": {
             "front_camera": {
