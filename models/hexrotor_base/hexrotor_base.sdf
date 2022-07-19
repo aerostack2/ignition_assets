@@ -98,6 +98,8 @@
                     </mesh>
                 </geometry>
             </visual>
+
+            <!-- IMU -->
             <sensor name="imu_sensor" type="imu">
                 <always_on>1</always_on>
                 <update_rate>250</update_rate>
@@ -174,6 +176,8 @@
                     </linear_acceleration>
                 </imu>
             </sensor>
+
+            <!-- AIR PRESSURE -->
             <sensor name="air_pressure" type="air_pressure">
                 <always_on>1</always_on>
                 <update_rate>20</update_rate>
@@ -184,6 +188,8 @@
                     </noise>
                 </air_pressure>
             </sensor>
+
+            <!-- MAGNETOMETER -->
             <sensor name="magnetometer" type="magnetometer">
                 <always_on>1</always_on>
                 <update_rate>20</update_rate>
