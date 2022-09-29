@@ -53,18 +53,10 @@ def general_bridges(context, *args, **kwargs):
 
 
 def generate_launch_description():
-    config = PathJoinSubstitution([
-        FindPackageShare('ignition_assets'),
-        'test', 'config.json'
-    ])
-    # DEBUG
-    config = "/home/parias/as2_ws/src/aerostack2/simulation/ignition_assets/test/config.json"
-
     return LaunchDescription([
         DeclareLaunchArgument(
             'config_file',
-            description='YAML configuration file to spawn',
-            default_value=config
+            description='YAML configuration file to spawn'
         ),
         OpaqueFunction(function=general_bridges),
         OpaqueFunction(function=model_bridges)
