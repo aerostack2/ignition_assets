@@ -88,6 +88,8 @@ class Model:
             ign_assets.bridges.magnetometer(world_name, self.model_name),
             # Air Pressure
             ign_assets.bridges.air_pressure(world_name, self.model_name),
+            # FIXME: temporal odom
+            ign_assets.bridges.odom(self.model_name),
             # pose
             ign_assets.bridges.pose(self.model_name),
             # pose static

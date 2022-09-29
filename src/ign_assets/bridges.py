@@ -44,6 +44,16 @@ def air_pressure(world_name, model_name, link_name='base_link'):
         direction=BridgeDirection.IGN_TO_ROS)
 
 
+# TEMPORAL FIXME
+def odom(model_name):
+    return Bridge(
+        ign_topic=f'/model/{model_name}/odometry',
+        ros_topic='sensor_measurements/odom',
+        ign_type='ignition.msgs.Odometry',
+        ros_type='nav_msgs/msg/Odometry',
+        direction=BridgeDirection.IGN_TO_ROS)
+
+
 def pose(model_name):
     return Bridge(
         ign_topic=f'/model/{model_name}/pose',
