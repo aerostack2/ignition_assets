@@ -148,18 +148,6 @@ function start_ign_client() {
 	CLIENT_PID=$!
 }
 
-function start_ros_bridge() {
-	echo "Starting ROS Bridge"
-
-	pushd "$HOME/mbzirc_ws/install/lib/ros_ign_bridge/" >/dev/null
-	# ros2 run ros_ign_bridge parameter_bridge /clock@rosgraph_msgs/msg/Clock[ignition.msgs.Clock &
-	./parameter_bridge /clock@rosgraph_msgs/msg/Clock[ignition.msgs.Clock &
-
-	BRIDGE_PID=$!
-	echo "ROS Bridge PID: $BRIDGE_PID"
-	popd >/dev/null
-}
-
 function spawn_drones() {
 	drones=$1
 	num_vehicles=${#drones[@]}
@@ -215,8 +203,6 @@ echo drones: ${drones[*]}
 echo world_path: $world_path
 
 start_ign_server $world_path
-sleep 1
-start_ros_bridge
 sleep 1
 
 spawn_drones $drones

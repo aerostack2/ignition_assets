@@ -27,7 +27,7 @@ def get_drone(drone):
 
     sensors = ""
     try:
-        for sensor_name, sensor in drone['sensors'].items():
+        for sensor_name, sensor in drone['payload'].items():
             try:
                 sensor_type = sensor['sensor']
             except KeyError as ex:
@@ -51,21 +51,14 @@ def get_drone(drone):
 
             sensors += f":{sensor_name}:{sensor_type}:{x_s}:{y_s}:{z_s}:{roll_s}:{pitch_s}:{yaw_s}"
     except KeyError as ex:
-        if (ex.args[0] != 'sensors'):
+        if (ex.args[0] != 'payload'):
             raise KeyError
         
     return f"{model}:{name}:{x}:{y}:{z}:{yaw}{sensors}"
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description='Tool to parse simluation configuration file'
-    )
-
-    parser.add_argument('filepath', type=str, help='Filepath to config file')
-    args = parser.parse_args()
-    
+def main(filepath):
     try:
-        json_data = open(args.filepath)
+        json_data = open(filepath)
         data = json.load(json_data)
         json_data.close()
     except FileNotFoundError:
@@ -79,17 +72,28 @@ if __name__ == "__main__":
             raise KeyError
         world = "none"
 
-    print(world)
-
     try:
         drones = data['drones']
     except KeyError as ex:
         if ex.args[0] != 'drones':
             raise KeyError
-        print("none:none:0:0:0:0")
-        exit(0)
+        return world, "none:none:0:0:0:0"
 
+    drone_ = []
     for drone in drones:
-        drone_ = get_drone(drone)
-        print(drone_)
+        drone_ += [get_drone(drone)]
+    
+    return world, drone_
 
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description='Tool to parse simluation configuration file'
+    )
+
+    parser.add_argument('filepath', type=str, help='Filepath to config file')
+    args = parser.parse_args()
+
+    world, drones = main(args.filepath)
+    print(world)
+    for drone in drones:
+        print(drone)

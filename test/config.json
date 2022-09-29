@@ -3,8 +3,9 @@
     "drones": [
     {
         "model": "quadrotor_base",
+        "name": "drone_sim_0",
         "pose": [ 0.0, 0.0, 0.2, 1.57 ],
-        "sensors": {
+        "payload": {
             "front_camera": {
                 "sensor": "hd_camera",
                 "position": [0.1, 0.2, 0.3]
@@ -17,11 +18,16 @@
     },
     {
         "model": "quadrotor_base",
+        "name": "drone_sim_1",
         "pose": [ 3.0, 0.0, 0.2, 1.57 ],
-        "sensors": {
+        "payload": {
             "camera": {
                 "sensor": "hd_camera",
                 "rotation": [ 0.0, 0.0, 0.0 ]
+            },
+            "gps0": {
+                "sensor": "gps",
+                "position": [ 0.0, 0.0, 0.08 ]
             }
         }
     }

@@ -1,0 +1,71 @@
+from launch import LaunchDescription
+from launch_ros.actions import Node
+from launch.actions import DeclareLaunchArgument, OpaqueFunction
+from launch.substitutions import PathJoinSubstitution, LaunchConfiguration
+from launch_ros.substitutions import FindPackageShare
+
+import ign_assets.bridges
+from ign_assets.model import Model
+import json
+
+
+def model_bridges(context, *args, **kwargs):
+    config_file = LaunchConfiguration('config_file').perform(context)
+
+    with open(config_file, 'r') as stream:
+        config = json.load(stream)
+        if 'world' not in config:
+            raise RuntimeError('Cannot construct bridges without world in config')
+        world_name = config['world']
+
+    with open(config_file, 'r') as stream:
+        models = Model.FromConfig(stream)
+
+    nodes = []
+    for model in models:
+        bridges = model.bridges(world_name)
+        nodes.append(Node(
+            package='ros_ign_bridge',
+            executable='parameter_bridge',
+            namespace=model.model_name,
+            output='screen',
+            arguments=[bridge.argument() for bridge in bridges],
+            remappings=[bridge.remapping() for bridge in bridges]
+        ))
+    return nodes
+
+
+def general_bridges(context, *args, **kwargs):
+    bridges = [
+        ign_assets.bridges.clock()
+    ]
+
+    nodes = []
+    nodes.append(Node(
+        package='ros_ign_bridge',
+        executable='parameter_bridge',
+        namespace='ign_assets',
+        output='screen',
+        arguments=[bridge.argument() for bridge in bridges],
+        remappings=[bridge.remapping() for bridge in bridges]
+    ))
+    return nodes
+
+
+def generate_launch_description():
+    config = PathJoinSubstitution([
+        FindPackageShare('ignition_assets'),
+        'test', 'config.json'
+    ])
+    # DEBUG
+    config = "/home/parias/as2_ws/src/aerostack2/simulation/ignition_assets/test/config.json"
+
+    return LaunchDescription([
+        DeclareLaunchArgument(
+            'config_file',
+            description='YAML configuration file to spawn',
+            default_value=config
+        ),
+        OpaqueFunction(function=general_bridges),
+        OpaqueFunction(function=model_bridges)
+    ])

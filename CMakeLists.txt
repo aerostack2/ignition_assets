@@ -24,7 +24,18 @@ ament_environment_hooks("hooks/resource_paths.dsv.in")
 ament_environment_hooks("hooks/resource_paths.sh")
 
 #============================================================================
+# Python modules
+ament_python_install_package(
+  ign_assets
+  PACKAGE_DIR src/ign_assets
+)
 
+#============================================================================
+# Launchers
+install(
+  DIRECTORY launch
+  DESTINATION share/${PROJECT_NAME}
+)
 
 #============================================================================
 # Resources
