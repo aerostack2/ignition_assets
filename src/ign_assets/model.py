@@ -99,16 +99,21 @@ class Model:
             # arm
             ign_assets.bridges.arm(self.model_name)
         ]
+        nodes = []
 
-        bridges.extend(self.payload_bridges(world_name))
+        bridges_, nodes_ = self.payload_bridges(world_name)
 
-        return bridges
+        bridges.extend(bridges_)
+        nodes.extend(nodes_)
+
+        return bridges, nodes
 
     def payload_bridges(self, world_name, payloads=None):
         if not payloads:
             payloads = self.payload
         
         bridges = []
+        nodes = []
         for k in payloads.keys():
             p = payloads[k]
             if not p['sensor'] or p['sensor'] == 'None' or p['sensor'] == '':
@@ -118,14 +123,16 @@ class Model:
             sensor_type = p['sensor']
             model_prefix = sensor_name
 
-            bridges.extend(
-                self.sensor_bridges(
-                    world_name, self.model_name, sensor_type, sensor_name, model_prefix))
-        return bridges
+            bridges_, nodes_ = self.sensor_bridges(
+                    world_name, self.model_name, sensor_type, sensor_name, model_prefix)
+            bridges.extend(bridges_)
+            nodes.extend(nodes_)
+        return bridges, nodes
 
     @staticmethod
     def sensor_bridges(world_name, model_name, payload, sensor_name, model_prefix=''):
         bridges = []
+        nodes = []
         if payload in camera_models():
             bridges = [
                 ign_assets.bridges.image(world_name, model_name, sensor_name, model_prefix),
@@ -144,9 +151,21 @@ class Model:
                 ign_assets.bridges.camera_points(world_name, model_name, sensor_name, model_prefix)
             ]
         elif payload in gps_models():
-            bridges = [
-                ign_assets.bridges.navsat(world_name, model_name, sensor_name, model_prefix)
-            ]
+            # bridges = [
+            #     ign_assets.bridges.navsat(world_name, model_name, sensor_name, model_prefix)
+            # ]
+            nodes.append(Node(
+                package='ignition_assets',
+                executable='gps_bridge',
+                output='screen',
+                parameters=[
+                    {'world_frame': world_name,
+                     'name_space': model_name,
+                     'sensor_name': sensor_name,
+                     'link_name': 'sensor_link',
+                     'sensor_type': model_prefix}
+                ]
+            ))
         elif payload in suction_gripper_models():
             bridges = [
                 ign_assets.bridges.gripper_suction_control(model_name),
@@ -156,7 +175,7 @@ class Model:
                 ign_assets.bridges.gripper_contact(model_name, 'top'),
                 ign_assets.bridges.gripper_contact(model_name, 'bottom')
             ]
-        return bridges
+        return bridges, nodes
 
     # def set_flight_time(self, flight_time):
     #     # UAV specific, sets flight time

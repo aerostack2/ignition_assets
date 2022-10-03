@@ -22,7 +22,7 @@ def model_bridges(context, *args, **kwargs):
 
     nodes = []
     for model in models:
-        bridges = model.bridges(world_name)
+        bridges, custom_bridges = model.bridges(world_name)
         nodes.append(Node(
             package='ros_ign_bridge',
             executable='parameter_bridge',
@@ -31,6 +31,9 @@ def model_bridges(context, *args, **kwargs):
             arguments=[bridge.argument() for bridge in bridges],
             remappings=[bridge.remapping() for bridge in bridges]
         ))
+        nodes += custom_bridges
+
+    print(nodes)
     return nodes
 
 
