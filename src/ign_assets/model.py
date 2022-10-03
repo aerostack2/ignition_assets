@@ -159,11 +159,11 @@ class Model:
                 executable='gps_bridge',
                 output='screen',
                 parameters=[
-                    {'world_frame': world_name,
+                    {'world_name': world_name,
                      'name_space': model_name,
                      'sensor_name': sensor_name,
                      'link_name': 'sensor_link',
-                     'sensor_type': model_prefix}
+                     'sensor_type': 'gps'}
                 ]
             ))
         elif payload in suction_gripper_models():
