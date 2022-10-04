@@ -9,9 +9,11 @@ import shutil
 def get_namespace():
     return os.getenv('AEROSTACK2_SIMULATION_DRONE_ID', default='drone_sim')
 
+
 def get_file_contents(filepath):
     with open(filepath, 'rb') as f:
         return f.read()
+
 
 def str2bool(v):
     if v.lower() in ('yes', 'true', 't', 'y', '1'):
@@ -30,29 +32,32 @@ def get_sensors(sensors_array):
         pose, sensors_array = sensors_array[:6], sensors_array[6:]
 
         sensors.append({'name': name, 'model': model,
-                    'pose': f'{pose[0]} {pose[1]} {pose[2]} {pose[3]} {pose[4]} {pose[5]}'})
+                        'pose': f'{pose[0]} {pose[1]} {pose[2]} {pose[3]} {pose[4]} {pose[5]}'})
     return sensors
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('filename', help="file that the sdf file should be generated from")
+    parser.add_argument(
+        'filename', help="file that the sdf file should be generated from")
     parser.add_argument('env_dir')
     parser.add_argument('--output-file', help="sdf output file")
-    parser.add_argument('--stdout', action='store_true', default=False, help="dump to stdout instead of file")
-    parser.add_argument('--namespace', default=get_namespace(), help="Drone ROS namespace")
+    parser.add_argument('--stdout', action='store_true',
+                        default=False, help="dump to stdout instead of file")
+    parser.add_argument('--namespace', default=get_namespace(),
+                        help="Drone ROS namespace")
     parser.add_argument('--sensors', default='', help="Drone model sensors")
-    parser.add_argument('--no-odom', action='store_false', dest="odom", help="Disable odometry plugin on model")
-    parser.add_argument('--battery', dest='bat_capacity', default='', help='Enable battery plugin on model with given capacity')  # TODO: draft
-    parser.add_argument('--comms', dest='comms_address', default='', help='Enable communications plugin on model with given address')  # TODO: draft
+    parser.add_argument('--no-odom', action='store_false',
+                        dest="odom", help="Disable odometry plugin on model")
+    parser.add_argument('--battery', dest='bat_capacity', default='',
+                        help='Enable battery plugin on model with given capacity')  # TODO: draft
     args = parser.parse_args()
     env = jinja2.Environment(loader=jinja2.FileSystemLoader(args.env_dir))
     template = env.get_template(os.path.relpath(args.filename, args.env_dir))
 
     sensors = get_sensors(str(args.sensors).split(sep=' '))
-    d = {'namespace': args.namespace, 'sensors': sensors, 'odom_plugin': args.odom, 
-         'battery_plugin': bool(args.bat_capacity), 'capacity': args.bat_capacity,
-         'comms_plugin': bool(args.comms_address), 'comms_address': args.comms_address}
+    d = {'namespace': args.namespace, 'sensors': sensors, 'odom_plugin': args.odom,
+         'battery_plugin': bool(args.bat_capacity), 'capacity': args.bat_capacity}
     result = template.render(d)
 
     if args.stdout:
@@ -62,7 +67,7 @@ if __name__ == "__main__":
             filename_out = args.output_file
         else:
             if not args.filename.endswith('.sdf.jinja'):
-                raise Exception("ERROR: Output file can only be determined automatically for " + \
+                raise Exception("ERROR: Output file can only be determined automatically for " +
                                 "input files with the .sdf.jinja extension")
             filename_out = args.filename.replace('.sdf.jinja', '.sdf')
             assert filename_out != args.filename, "Not allowed to overwrite template"
@@ -74,9 +79,9 @@ if __name__ == "__main__":
         if os.path.exists(filename_out) and os.path.exists(filename_out_last_generated):
             # Check whether the target file is still unmodified.
             if get_file_contents(filename_out).strip() != get_file_contents(filename_out_last_generated).strip():
-                raise Exception("ERROR: generation would overwrite changes to `{}`. ".format(filename_out) + \
-                                "Changes should only be made to the template file `{}`. ".format(args.filename) + \
-                                "Remove `{}` ".format(os.path.basename(filename_out)) + \
+                raise Exception("ERROR: generation would overwrite changes to `{}`. ".format(filename_out) +
+                                "Changes should only be made to the template file `{}`. ".format(args.filename) +
+                                "Remove `{}` ".format(os.path.basename(filename_out)) +
                                 "(after extracting your changes) to disable this overwrite protection.")
 
         with open(filename_out, 'w') as f_out:
