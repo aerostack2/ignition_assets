@@ -12,8 +12,6 @@
 class GPSBridge : public rclcpp::Node {
 public:
   GPSBridge() : Node("gps_bridge") {
-    RCLCPP_INFO(this->get_logger(), "-1");
-
     this->declare_parameter<std::string>("world_name");
     this->get_parameter("world_name", world_name);
 
@@ -29,14 +27,11 @@ public:
     this->declare_parameter<std::string>("sensor_type");
     this->get_parameter("sensor_type", sensor_type);
 
-    RCLCPP_INFO(this->get_logger(), "0");
-
     // Initialize the ignition node
     ign_node_ptr_         = std::make_shared<ignition::transport::Node>();
     std::string gps_topic = "/world/" + world_name + "/model/" + name_space + "/model/" +
                             sensor_name + "/link/" + link_name + "/sensor/" + sensor_type +
                             "/navsat";
-    RCLCPP_INFO(this->get_logger(), "1");
     ign_node_ptr_->Subscribe(gps_topic, this->ignitionGPSCallback);
 
     gps_pub_ = this->create_publisher<sensor_msgs::msg::NavSatFix>("ign_bridge/navsat",
@@ -72,7 +67,6 @@ private:
   static void ignitionGPSCallback(const ignition::msgs::NavSat &ign_msg,
                                   const ignition::transport::MessageInfo &msg_info) {
     sensor_msgs::msg::NavSatFix ros_msg;
-    // ros_ign_bridge::convert_ign_to_ros(msg, ros_gps_msg);
 
     ros_ign_bridge::convert_ign_to_ros(ign_msg.header(), ros_msg.header);
     ros_msg.header.frame_id = GPSBridge::replace_delimiter(ign_msg.frame_id(), "::", "/");

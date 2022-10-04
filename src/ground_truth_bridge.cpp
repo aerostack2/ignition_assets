@@ -13,17 +13,12 @@
 class GroundTruthBridge : public rclcpp::Node {
 public:
   GroundTruthBridge() : Node("ground_truth_bridge") {
-    RCLCPP_INFO(this->get_logger(), "-1");
-
     this->declare_parameter<std::string>("name_space");
     this->get_parameter("name_space", model_name);
-
-    RCLCPP_INFO(this->get_logger(), "0");
 
     // Initialize the ignition node
     ign_node_ptr_                  = std::make_shared<ignition::transport::Node>();
     std::string ground_truth_topic = "/model/" + model_name + "/odmetry";
-    RCLCPP_INFO(this->get_logger(), "1");
     ign_node_ptr_->Subscribe(ground_truth_topic, this->ignitionGroundTruthCallback);
 
     ps_pub_ = this->create_publisher<geometry_msgs::msg::PoseStamped>(
@@ -63,7 +58,6 @@ private:
                                           const ignition::transport::MessageInfo &msg_info) {
     geometry_msgs::msg::PoseStamped ps_msg;
     geometry_msgs::msg::TwistStamped ts_msg;
-    // ros_ign_bridge::convert_ign_to_ros(msg, ros_gps_msg);
 
     ros_ign_bridge::convert_ign_to_ros(ign_msg.header(), ps_msg.header);
     ps_msg.header.frame_id    = "earth";
