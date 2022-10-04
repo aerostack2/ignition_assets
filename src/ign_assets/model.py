@@ -88,8 +88,8 @@ class Model:
             ign_assets.bridges.magnetometer(world_name, self.model_name),
             # Air Pressure
             ign_assets.bridges.air_pressure(world_name, self.model_name),
-            # FIXME: temporal odom
-            ign_assets.bridges.odom(self.model_name),
+            # # FIXME: temporal odom
+            # ign_assets.bridges.odom(self.model_name),
             # pose
             ign_assets.bridges.pose(self.model_name),
             # pose static
@@ -99,7 +99,17 @@ class Model:
             # arm
             ign_assets.bridges.arm(self.model_name)
         ]
-        nodes = []
+        nodes = [
+            # Odom --> ground_truth
+            Node(
+                package='ignition_assets',
+                executable='ground_truth_bridge',
+                output='screen',
+                parameters=[
+                    {'name_space': self.model_name}
+                ]
+            )
+        ]
 
         bridges_, nodes_ = self.payload_bridges(world_name)
 

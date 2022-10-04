@@ -39,8 +39,8 @@ public:
     RCLCPP_INFO(this->get_logger(), "1");
     ign_node_ptr_->Subscribe(gps_topic, this->ignitionGPSCallback);
 
-    gps_pub_ = this->create_publisher<sensor_msgs::msg::NavSatFix>(
-      "ign_bridge/navsat", rclcpp::SensorDataQoS());
+    gps_pub_ = this->create_publisher<sensor_msgs::msg::NavSatFix>("ign_bridge/navsat",
+                                                                   rclcpp::SensorDataQoS());
   }
 
 private:

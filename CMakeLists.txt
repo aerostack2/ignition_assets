@@ -12,9 +12,11 @@ set(PROJECT_DEPENDENCIES
   ament_cmake
   ros_ign_gazebo
   ros_ign_bridge
-  # GPS BRIDGE
+  # CUSTOM BRIDGES
+  rclcpp
   as2_core
   sensor_msgs
+  geometry_msgs
 )
 
 foreach(DEPENDENCY ${PROJECT_DEPENDENCIES})
@@ -42,8 +44,19 @@ ament_target_dependencies(gps_bridge
   ignition-transport11
 )
 
+add_executable(ground_truth_bridge src/ground_truth_bridge.cpp)
+ament_target_dependencies(ground_truth_bridge
+  rclcpp
+  ros_ign_bridge
+  as2_core
+  geometry_msgs
+  ignition-msgs8
+  ignition-transport11
+)
+
 install(TARGETS
   gps_bridge
+  ground_truth_bridge
   DESTINATION lib/${PROJECT_NAME})
 
 #============================================================================
