@@ -22,9 +22,9 @@ public:
     ign_node_ptr_->Subscribe(ground_truth_topic, this->ignitionGroundTruthCallback);
 
     ps_pub_ = this->create_publisher<geometry_msgs::msg::PoseStamped>(
-        "ign_bridge/ground_truth/pose", rclcpp::SensorDataQoS());
+        "ign_bridge/" + model_name + "/ground_truth/pose", rclcpp::SensorDataQoS());
     ts_pub_ = this->create_publisher<geometry_msgs::msg::TwistStamped>(
-        "ign_bridge/ground_truth/twist", rclcpp::SensorDataQoS());
+        "ign_bridge/" + model_name + "/ground_truth/twist", rclcpp::SensorDataQoS());
   }
 
 private:
