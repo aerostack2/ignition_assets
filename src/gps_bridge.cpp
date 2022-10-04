@@ -3,11 +3,11 @@
 #include <string>
 
 #include <as2_core/names/topics.hpp>
-#include "sensor_msgs/msg/nav_sat_fix.hpp"
-
 #include <ignition/msgs.hh>
 #include <ignition/transport.hh>
 #include <ros_ign_bridge/convert.hpp>
+#include "rclcpp/rclcpp.hpp"
+#include "sensor_msgs/msg/nav_sat_fix.hpp"
 
 class GPSBridge : public rclcpp::Node {
 public:
@@ -38,11 +38,15 @@ public:
                             "/navsat";
     RCLCPP_INFO(this->get_logger(), "1");
     ign_node_ptr_->Subscribe(gps_topic, this->ignitionGPSCallback);
+
+    gps_pub_ = this->create_publisher<sensor_msgs::msg::NavSatFix>(
+      "ign_bridge/navsat", rclcpp::SensorDataQoS());
   }
 
 private:
   std::shared_ptr<ignition::transport::Node> ign_node_ptr_;
   std::string world_name, name_space, sensor_name, link_name, sensor_type;
+  static rclcpp::Publisher<sensor_msgs::msg::NavSatFix>::SharedPtr gps_pub_;
 
 private:
   static std::string replace_delimiter(const std::string &input,
@@ -80,10 +84,11 @@ private:
     ros_msg.position_covariance_type = sensor_msgs::msg::NavSatFix::COVARIANCE_TYPE_UNKNOWN;
     ros_msg.status.status            = sensor_msgs::msg::NavSatStatus::STATUS_FIX;
 
-    // RCLCPP_INFO(this->get_logger(), "test");
-    std::cout << "Hola" << std::endl;
+    gps_pub_->publish(ros_msg);
   };
 };
+
+rclcpp::Publisher<sensor_msgs::msg::NavSatFix>::SharedPtr GPSBridge::gps_pub_ = nullptr;
 
 int main(int argc, char *argv[]) {
   rclcpp::init(argc, argv);
