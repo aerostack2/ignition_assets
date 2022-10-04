@@ -3,6 +3,17 @@
 import json
 import argparse
 
+
+def get_battery_capacity(flight_time):
+    # UAV specific, sets flight time
+
+    # calculate battery capacity from time
+    # capacity (Ah) = flight time (in hours) * load (watts) / voltage
+    # assume constant voltage for battery to keep things simple for now.
+    battery_capacity = (float(flight_time) / 60) * 6.6 / 12.694
+    return battery_capacity
+
+
 def get_drone(drone):
     try:
         model = drone['model']
@@ -24,6 +35,11 @@ def get_drone(drone):
         if ex.args[0] != 'pose':
             raise KeyError
         x, y, z, yaw = 0, 0, 0, 0
+
+    capacity = 0
+    if "flight_time" in drone:
+        flight_time = drone['flight_time']
+        capacity = get_battery_capacity(flight_time)
 
     sensors = ""
     try:
@@ -54,7 +70,7 @@ def get_drone(drone):
         if (ex.args[0] != 'payload'):
             raise KeyError
         
-    return f"{model}:{name}:{x}:{y}:{z}:{yaw}{sensors}"
+    return f"{model}:{name}:{x}:{y}:{z}:{yaw}:{capacity}{sensors}"
 
 def main(filepath):
     try:

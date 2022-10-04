@@ -5,6 +5,7 @@
         "model": "quadrotor_base",
         "name": "drone_sim_0",
         "pose": [ 0.0, 0.0, 0.2, 1.57 ],
+        "flight_time": 60,
         "payload": {
             "front_camera": {
                 "sensor": "hd_camera",

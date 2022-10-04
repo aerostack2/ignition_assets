@@ -82,7 +82,8 @@ function spawn_drone_model() {
     y=$5
     z=$6
     Y=$7
-	sensors=${@:8}  # All next arguments
+	capacity=$8
+	sensors=${@:9}  # All next arguments
 	
 	N=${N:=0}
 	model=${model:=""}
@@ -91,6 +92,7 @@ function spawn_drone_model() {
 	y=${y:=$((3*${N}))}
 	z=${z:=0.1}
 	Y=${Y:=0.0}
+	capacity=${capacity:=""}
 	sensors=${sensors:=""}
 
 	if [ "$model" == "" ] || [ "$model" == "none" ]; then
@@ -109,7 +111,7 @@ function spawn_drone_model() {
 	target="${model}/${model}.sdf"
 	modelpath="$(get_path ${target} ${IGN_GAZEBO_RESOURCE_PATH})"
     DIR_SCRIPT="${0%/*}"
-    python3 ${DIR_SCRIPT}/jinja_gen.py ${modelpath}/${target}.jinja ${modelpath}/.. --namespace "${name}" --sensors "${sensors}" --output-file /tmp/${model}_${N}.sdf
+    python3 ${DIR_SCRIPT}/jinja_gen.py ${modelpath}/${target}.jinja ${modelpath}/.. --namespace "${name}" --sensors "${sensors}" --battery "${capacity}" --output-file /tmp/${model}_${N}.sdf
 
     ros2 run ros_ign_gazebo create -world ${world_name} -file /tmp/${model}_${N}.sdf -name "${name}" -x $x -y $y -z $z -Y $Y
 }

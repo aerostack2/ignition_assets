@@ -99,6 +99,8 @@ class Model:
             # arm
             ign_assets.bridges.arm(self.model_name)
         ]
+        if self.battery_capacity != 0:
+            bridges.append(ign_assets.bridges.battery(self.model_name))
         nodes = [
             # Odom --> ground_truth
             Node(
@@ -187,13 +189,13 @@ class Model:
             ]
         return bridges, nodes
 
-    # def set_flight_time(self, flight_time):
-    #     # UAV specific, sets flight time
+    def set_flight_time(self, flight_time):
+        # UAV specific, sets flight time
 
-    #     # calculate battery capacity from time
-    #     # capacity (Ah) = flight time (in hours) * load (watts) / voltage
-    #     # assume constant voltage for battery to keep things simple for now.
-    #     self.battery_capacity = (float(flight_time) / 60) * 6.6 / 12.694
+        # calculate battery capacity from time
+        # capacity (Ah) = flight time (in hours) * load (watts) / voltage
+        # assume constant voltage for battery to keep things simple for now.
+        self.battery_capacity = (float(flight_time) / 60) * 6.6 / 12.694
 
     def set_payload(self, payload):
         self.payload = payload

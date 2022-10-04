@@ -44,7 +44,7 @@ def air_pressure(world_name, model_name, link_name='base_link'):
         direction=BridgeDirection.IGN_TO_ROS)
 
 
-# TEMPORAL FIXME
+# NOT USED, USE CUSTOM BRIDGE INSTEAD: ODOM --> GROUND_TRUTH
 def odom(model_name):
     return Bridge(
         ign_topic=f'/model/{model_name}/odometry',
@@ -90,6 +90,15 @@ def arm(model_name):
         ign_type='ignition.msgs.Boolean',
         ros_type='std_msgs/msg/Bool',
         direction=BridgeDirection.ROS_TO_IGN)
+
+
+def battery(model_name):
+    return Bridge(
+        ign_topic=f"/model/{model_name}/battery/linear_battery/state",
+        ros_topic="battery",
+        ign_type="ignition.msgs.BatteryState",
+        ros_type="sensor_msgs/msg/BatteryState",
+        direction=BridgeDirection.IGN_TO_ROS)
 
 
 def image(world_name, model_name, sensor_name, model_prefix=''):

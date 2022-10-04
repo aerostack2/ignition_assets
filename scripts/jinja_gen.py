@@ -49,15 +49,15 @@ if __name__ == "__main__":
     parser.add_argument('--sensors', default='', help="Drone model sensors")
     parser.add_argument('--no-odom', action='store_false',
                         dest="odom", help="Disable odometry plugin on model")
-    parser.add_argument('--battery', dest='bat_capacity', default='',
-                        help='Enable battery plugin on model with given capacity')  # TODO: draft
+    parser.add_argument('--battery', dest='bat_capacity', default=0.0,
+                        help='Enable battery plugin on model with given capacity')
     args = parser.parse_args()
     env = jinja2.Environment(loader=jinja2.FileSystemLoader(args.env_dir))
     template = env.get_template(os.path.relpath(args.filename, args.env_dir))
 
     sensors = get_sensors(str(args.sensors).split(sep=' '))
     d = {'namespace': args.namespace, 'sensors': sensors, 'odom_plugin': args.odom,
-         'battery_plugin': bool(args.bat_capacity), 'capacity': args.bat_capacity}
+         'battery_plugin': bool(float(args.bat_capacity)), 'capacity': float(args.bat_capacity)}
     result = template.render(d)
 
     if args.stdout:
