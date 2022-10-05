@@ -106,6 +106,7 @@ class Model:
             Node(
                 package='ignition_assets',
                 executable='ground_truth_bridge',
+                namespace=self.model_name,
                 output='screen',
                 parameters=[
                     {'name_space': self.model_name}
@@ -114,6 +115,7 @@ class Model:
             Node(
                 package='ignition_assets',
                 executable='tf_broadcaster',
+                namespace=self.model_name,
                 output='screen',
                 parameters=[
                     {
@@ -180,6 +182,7 @@ class Model:
             nodes.append(Node(
                 package='ignition_assets',
                 executable='gps_bridge',
+                namespace=model_name,
                 output='screen',
                 parameters=[
                     {'world_name': world_name,

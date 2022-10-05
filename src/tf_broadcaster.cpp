@@ -20,9 +20,9 @@ public:
     this->tfBroadcasterStatic = std::make_unique<tf2_ros::StaticTransformBroadcaster>(*this);
 
     this->subscription = this->create_subscription<tf2_msgs::msg::TFMessage>(
-        "/ign_bridge/drone_sim_0/pose", 10, std::bind(&FramePublisher::HandlePose, this, _1));
+        "pose", 10, std::bind(&FramePublisher::HandlePose, this, _1));
     this->subscriptionStatic = this->create_subscription<tf2_msgs::msg::TFMessage>(
-        "/ign_bridge/drone_sim_0/pose_static", 10,
+        "pose_static", 10,
         std::bind(&FramePublisher::HandlePoseStatic, this, _1));
   }
 
