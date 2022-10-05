@@ -7,6 +7,12 @@ import ign_assets.bridges
 from ign_assets.model import Model
 import json
 
+#
+# NOT INTENDED TO USE!! USE MODEL AND WORLD BRIDGES INSTEAD.
+# THIS LAUNCH FILE CREATES BRIDGES FOR ALL THE CONFIG FILE, INCLUDED WORLD AND ALL MODELS INSIDE.
+# BRIDGES SHOULD BE CREATED WITHIN THE PLATFORM LAUNCH.
+# 
+
 
 def model_bridges(context, *args, **kwargs):
     config_file = LaunchConfiguration('config_file').perform(context)

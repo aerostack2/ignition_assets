@@ -146,7 +146,7 @@ function start_ign_server() {
 }
 
 function start_ign_client() {
-	ign gazebo -g >/dev/null 2>/dev/null
+	ign gazebo -g >/dev/null 2>/dev/null &
 	CLIENT_PID=$!
 }
 
@@ -165,6 +165,11 @@ function spawn_drones() {
 		spawn_drone_model $n ${drone_array[*]}
 		n=$(($n + 1))
 	done
+}
+
+function create_world_bridges() {
+	ros2 launch ignition_assets world_bridges.py
+	BRIDGE_PID=$!
 }
 
 # ------- MAIN -------
@@ -211,7 +216,9 @@ spawn_drones $drones
 
 start_ign_client
 
-echo "Kill BRIDGE_PID $BRIDGE_PID"
+# ZOMBIE NODE NOT KILLED PROPERLY IF NOT LAUNCHED LAST
+create_world_bridges
+
 kill -9 ${BRIDGE_PID}
 kill -9 ${CLIENT_PID}
 kill -9 ${SERVER_PID}
