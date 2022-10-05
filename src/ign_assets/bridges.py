@@ -67,8 +67,8 @@ def pose(model_name):
 def pose_static(model_name):
     return Bridge(
         ign_topic=f'/model/{model_name}/pose_static',
-        # ros_topic='pose_static',
-        ros_topic='/tf',
+        ros_topic='pose_static',
+        # ros_topic='/tf',
         ign_type='ignition.msgs.Pose_V',
         ros_type='tf2_msgs/msg/TFMessage',
         direction=BridgeDirection.IGN_TO_ROS)

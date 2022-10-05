@@ -54,9 +54,18 @@ ament_target_dependencies(ground_truth_bridge
   ignition-transport11
 )
 
+add_executable(tf_broadcaster src/tf_broadcaster.cpp)
+ament_target_dependencies(tf_broadcaster
+  rclcpp
+  geometry_msgs
+  tf2_msgs
+  tf2_ros
+)
+
 install(TARGETS
   gps_bridge
   ground_truth_bridge
+  tf_broadcaster
   DESTINATION lib/${PROJECT_NAME})
 
 #============================================================================

@@ -83,11 +83,11 @@ class Model:
     def bridges(self, world_name):
         bridges = [
             # IMU
-            ign_assets.bridges.imu(world_name, self.model_name),
+            ign_assets.bridges.imu(world_name, self.model_name, 'imu'),
             # Magnetometer
-            ign_assets.bridges.magnetometer(world_name, self.model_name),
+            ign_assets.bridges.magnetometer(world_name, self.model_name, 'magnetometer'),
             # Air Pressure
-            ign_assets.bridges.air_pressure(world_name, self.model_name),
+            ign_assets.bridges.air_pressure(world_name, self.model_name, 'air_pressure'),
             # # FIXME: temporal odom
             # ign_assets.bridges.odom(self.model_name),
             # pose
@@ -109,6 +109,17 @@ class Model:
                 output='screen',
                 parameters=[
                     {'name_space': self.model_name}
+                ]
+            ),
+            Node(
+                package='ignition_assets',
+                executable='tf_broadcaster',
+                output='screen',
+                parameters=[
+                    {
+                        'world_frame': world_name,
+                        'name_space': self.model_name
+                    }
                 ]
             )
         ]
