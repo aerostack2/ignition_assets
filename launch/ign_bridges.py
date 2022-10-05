@@ -46,7 +46,6 @@ def general_bridges(context, *args, **kwargs):
     nodes.append(Node(
         package='ros_ign_bridge',
         executable='parameter_bridge',
-        namespace='ign_assets',
         output='screen',
         arguments=[bridge.argument() for bridge in bridges],
         remappings=[bridge.remapping() for bridge in bridges]

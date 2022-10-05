@@ -77,9 +77,6 @@ class Model:
     def __repr__(self) -> str:
         return f"{self.model_name}[{self.model_type}]"
 
-    # def is_UAV(self):
-    #     return self.model_type in UAVS
-
     def bridges(self, world_name):
         bridges = [
             # IMU
@@ -112,18 +109,18 @@ class Model:
                     {'name_space': self.model_name}
                 ]
             ),
-            Node(
-                package='ignition_assets',
-                executable='tf_broadcaster',
-                namespace=self.model_name,
-                output='screen',
-                parameters=[
-                    {
-                        'world_frame': world_name,
-                        'name_space': self.model_name
-                    }
-                ]
-            )
+            # Node(
+            #     package='ignition_assets',
+            #     executable='tf_broadcaster',
+            #     namespace=self.model_name,
+            #     output='screen',
+            #     parameters=[
+            #         {
+            #             'world_frame': world_name,
+            #             'name_space': self.model_name
+            #         }
+            #     ]
+            # )
         ]
 
         bridges_, nodes_ = self.payload_bridges(world_name)
