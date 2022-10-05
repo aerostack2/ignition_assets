@@ -225,16 +225,6 @@
         </plugin>
         {% endif -%}
 
-        {% if comms_plugin %}
-        <!-- Comms endpoint-->
-        <plugin
-        filename="ignition-gazebo-comms-endpoint-system"
-        name="ignition::gazebo::systems::CommsEndpoint">
-            <address>{{ comms_address }}</address>
-            <topic>model/{{ namespace }}/rx</topic>
-        </plugin>
-        {% endif -%}
-
         {% for sensor in sensors -%}
         <!-- Payload {{ name }} -->
         <include>

@@ -66,7 +66,7 @@ Using environment variables is though when using only one drone.
 ### CONFIG FILE
 Using a config file lets you to set the simulation environment. You can select a world (or none) and attach to it a number of desired drones with desired model, position and set of sensors. Please pay atention to the format file, otherwise it may fail.
 
-Config file template:
+JSON file template:
 ```
 {
     "world": "<world-name>",                // optional: deafult world if empty
@@ -74,12 +74,14 @@ Config file template:
     {
         "model": "<model-name>",            // optional: default model if empty
         "name": "<namespace>",              // optional: default namespace if empty
-        "pose": [<x>, <y>, <z>, <yaw>],     // optional: [0, 0, 0, 0] if empty
-        "sensors": {                        // optional: no sensors if none
+        "xyz": [<x>, <y>, <z>],             // optional: [0, 0, 0] if empty
+        "rpy": [<roll>, <pitch>, <yaw>],    // optional: [0, 0, 0] if empty
+        "flight_time": <min>,               // optional: 0 or empty means not use battery
+        "payload": {                        // optional: no sensors if none
             "<sensor-name>": {              // REQUIRED if sensor is used
                 "sensor": "<sensor-type>",  // REQUIRED if sensor is used
-                "position": [<x>, <y>, <z>], // optional: [0, 0, 0] if empty
-                "rotation": [<yaw>, <pitch>, <roll>], // optional: [0, 0, 0] if empty
+                "xyz": [<x>, <y>, <z>],     // optional: [0, 0, 0] if empty
+                "rpy": [<roll>, <pitch>, <yaw>], // optional: [0, 0, 0] if empty
             },
             "<sensor-name-2>": {
                 // Second sensor...
@@ -94,7 +96,7 @@ Config file template:
 ```
 Notice that comments are not available in JSON format and fields between "<" and ">" should be replaced with each value or removed (along with the field) if is not wanted or required.
 
-Example of a valid config file:
+Example of a valid JSON config file:
 ```json
 {
     "world": "empty",
@@ -102,21 +104,23 @@ Example of a valid config file:
     {
         "model": "quadrotor_base",
         "name": "drone_sim_0",
-        "pose": [ 0.0, 0.0, 0.2, 1.57 ],
-        "sensors": {
+        "xyz": [ 0.0, 0.0, 0.2 ],
+        "payload": {
             "front_camera": {
                 "sensor": "hd_camera",
-                "rotation": [ 0.0, 0.0, 1.57 ]
+                "rpy": [ 0.0, 0.0, 1.57 ]
             },
             "lidar_0": {
                 "sensor": "3d_lidar",
-                "position": [ 0.0, 0.0, -0.5 ]
+                "xyz": [ 0.0, 0.0, -0.5 ]
             }
         }
     },
     {
         "model": "hexrotor_base",
-        "pose": [ 3.0, 0.0, 0.2, 1.57 ]
+        "xyz": [ 3.0, 0.0, 0.2 ],
+        "rpy": [ 0, 0, 1.57 ],
+        "flight_time": 10
     }
     ]
 }
