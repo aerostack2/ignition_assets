@@ -8,7 +8,7 @@
 
 #include <ignition/msgs.hh>
 #include <ignition/transport.hh>
-#include <ros_gz_bridge/convert.hpp>
+#include <ros_ign_bridge/convert.hpp>
 
 class GroundTruthBridge : public rclcpp::Node {
 public:
@@ -21,10 +21,10 @@ public:
     std::string ground_truth_topic = "/model/" + model_name + "/odometry";
     ign_node_ptr_->Subscribe(ground_truth_topic, this->ignitionGroundTruthCallback);
 
-    ps_pub_ = this->create_publisher<geometry_msgs::msg::PoseStamped>(
-        "ground_truth/pose", rclcpp::SensorDataQoS());
-    ts_pub_ = this->create_publisher<geometry_msgs::msg::TwistStamped>(
-        "ground_truth/twist", rclcpp::SensorDataQoS());
+    ps_pub_ = this->create_publisher<geometry_msgs::msg::PoseStamped>("ground_truth/pose",
+                                                                      rclcpp::SensorDataQoS());
+    ts_pub_ = this->create_publisher<geometry_msgs::msg::TwistStamped>("ground_truth/twist",
+                                                                       rclcpp::SensorDataQoS());
   }
 
 private:
@@ -59,7 +59,7 @@ private:
     geometry_msgs::msg::PoseStamped ps_msg;
     geometry_msgs::msg::TwistStamped ts_msg;
 
-    ros_gz_bridge::convert_gz_to_ros(ign_msg.header(), ps_msg.header);
+    ros_ign_bridge::convert_ign_to_ros(ign_msg.header(), ps_msg.header);
     ps_msg.header.frame_id    = "earth";
     ps_msg.pose.position.x    = ign_msg.pose().position().x();
     ps_msg.pose.position.y    = ign_msg.pose().position().y();
@@ -68,7 +68,7 @@ private:
     ps_msg.pose.orientation.x = ign_msg.pose().orientation().x();
     ps_msg.pose.orientation.y = ign_msg.pose().orientation().y();
     ps_msg.pose.orientation.z = ign_msg.pose().orientation().z();
-    ros_gz_bridge::convert_gz_to_ros(ign_msg.header(), ts_msg.header);
+    ros_ign_bridge::convert_ign_to_ros(ign_msg.header(), ts_msg.header);
     ts_msg.header.frame_id = "base_link";
     ts_msg.twist.linear.x  = ign_msg.twist().linear().x();
     ts_msg.twist.linear.y  = ign_msg.twist().linear().y();
