@@ -5,7 +5,7 @@
 #include <as2_core/names/topics.hpp>
 #include <ignition/msgs.hh>
 #include <ignition/transport.hh>
-#include <ros_ign_bridge/convert.hpp>
+#include <ros_gz_bridge/convert.hpp>
 #include "rclcpp/rclcpp.hpp"
 #include "sensor_msgs/msg/nav_sat_fix.hpp"
 
@@ -68,7 +68,7 @@ private:
                                   const ignition::transport::MessageInfo &msg_info) {
     sensor_msgs::msg::NavSatFix ros_msg;
 
-    ros_ign_bridge::convert_ign_to_ros(ign_msg.header(), ros_msg.header);
+    ros_gz_bridge::convert_gz_to_ros(ign_msg.header(), ros_msg.header);
     ros_msg.header.frame_id = GPSBridge::replace_delimiter(ign_msg.frame_id(), "::", "/");
     ros_msg.latitude        = ign_msg.latitude_deg();
     ros_msg.longitude       = ign_msg.longitude_deg();

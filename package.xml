@@ -11,7 +11,7 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <depend>ros_ign_gazebo</depend>
-  <depend>ros_ign_bridge</depend>
+  <depend>ros_gz_bridge</depend>
 
   <export>
     <build_type>ament_cmake</build_type>

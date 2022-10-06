@@ -10,7 +10,7 @@ def generate_launch_description():
     ]
     return LaunchDescription([
         Node(
-            package='ros_ign_bridge',
+            package='ros_gz_bridge',
             executable='parameter_bridge',
             namespace='world',
             output='screen',

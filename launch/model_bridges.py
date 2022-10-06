@@ -25,7 +25,7 @@ def model_bridges(context, *args, **kwargs):
         if model.model_name == drone_id:
             bridges, custom_bridges = model.bridges(world_name)
             nodes.append(Node(
-                package='ros_ign_bridge',
+                package='ros_gz_bridge',
                 executable='parameter_bridge',
                 namespace=model.model_name,
                 output='screen',
