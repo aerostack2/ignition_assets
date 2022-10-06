@@ -17,7 +17,7 @@
             <publish_model_pose>false</publish_model_pose>
             <use_pose_vector_msg>true</use_pose_vector_msg>
             <static_publisher>true</static_publisher>
-            <static_update_frequency>1</static_update_frequency>
+            <static_update_frequency>100</static_update_frequency>
         </plugin>
         <plugin 
             filename="ignition-gazebo-multicopter-motor-model-system"
@@ -157,6 +157,7 @@
             filename="ignition-gazebo-odometry-publisher-system"
             name="ignition::gazebo::systems::OdometryPublisher">
             <dimensions>3</dimensions>
+            <odom_publish_frequency>100</odom_publish_frequency>
         </plugin>
         {% endif -%}
 
