@@ -106,7 +106,9 @@ class Model:
                 namespace=self.model_name,
                 output='screen',
                 parameters=[
-                    {'name_space': self.model_name}
+                    {'name_space': self.model_name,
+                     'pose_frame_id': 'earth',
+                     'twist_frame_id': self.model_name + '/base_link'},
                 ]
             ),
             # Node(
