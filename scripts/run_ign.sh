@@ -82,7 +82,8 @@ function spawn_drone_model() {
     y=$5
     z=$6
     Y=$7
-	sensors=${@:8}  # All next arguments
+	capacity=$8
+	sensors=${@:9}  # All next arguments
 	
 	N=${N:=0}
 	model=${model:=""}
@@ -91,6 +92,7 @@ function spawn_drone_model() {
 	y=${y:=$((3*${N}))}
 	z=${z:=0.1}
 	Y=${Y:=0.0}
+	capacity=${capacity:=""}
 	sensors=${sensors:=""}
 
 	if [ "$model" == "" ] || [ "$model" == "none" ]; then
@@ -109,7 +111,7 @@ function spawn_drone_model() {
 	target="${model}/${model}.sdf"
 	modelpath="$(get_path ${target} ${IGN_GAZEBO_RESOURCE_PATH})"
     DIR_SCRIPT="${0%/*}"
-    python3 ${DIR_SCRIPT}/jinja_gen.py ${modelpath}/${target}.jinja ${modelpath}/.. --namespace "${name}" --sensors "${sensors}" --output-file /tmp/${model}_${N}.sdf
+    python3 ${DIR_SCRIPT}/jinja_gen.py ${modelpath}/${target}.jinja ${modelpath}/.. --namespace "${name}" --sensors "${sensors}" --battery "${capacity}" --output-file /tmp/${model}_${N}.sdf
 
     ros2 run ros_ign_gazebo create -world ${world_name} -file /tmp/${model}_${N}.sdf -name "${name}" -x $x -y $y -z $z -Y $Y
 }
@@ -144,20 +146,8 @@ function start_ign_server() {
 }
 
 function start_ign_client() {
-	ign gazebo -g >/dev/null 2>/dev/null
+	ign gazebo -g >/dev/null 2>/dev/null &
 	CLIENT_PID=$!
-}
-
-function start_ros_bridge() {
-	echo "Starting ROS Bridge"
-
-	pushd "$HOME/mbzirc_ws/install/lib/ros_ign_bridge/" >/dev/null
-	# ros2 run ros_ign_bridge parameter_bridge /clock@rosgraph_msgs/msg/Clock[ignition.msgs.Clock &
-	./parameter_bridge /clock@rosgraph_msgs/msg/Clock[ignition.msgs.Clock &
-
-	BRIDGE_PID=$!
-	echo "ROS Bridge PID: $BRIDGE_PID"
-	popd >/dev/null
 }
 
 function spawn_drones() {
@@ -175,6 +165,11 @@ function spawn_drones() {
 		spawn_drone_model $n ${drone_array[*]}
 		n=$(($n + 1))
 	done
+}
+
+function create_world_bridges() {
+	ros2 launch ignition_assets world_bridges.py
+	BRIDGE_PID=$!
 }
 
 # ------- MAIN -------
@@ -216,14 +211,14 @@ echo world_path: $world_path
 
 start_ign_server $world_path
 sleep 1
-start_ros_bridge
-sleep 1
 
 spawn_drones $drones
 
 start_ign_client
 
-echo "Kill BRIDGE_PID $BRIDGE_PID"
+# ZOMBIE NODE NOT KILLED PROPERLY IF NOT LAUNCHED LAST
+create_world_bridges
+
 kill -9 ${BRIDGE_PID}
 kill -9 ${CLIENT_PID}
 kill -9 ${SERVER_PID}

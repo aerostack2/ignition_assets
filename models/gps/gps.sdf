@@ -6,7 +6,7 @@
             name="ignition::gazebo::systems::NavSat">
         </plugin>
 
-        <link name='link'>
+        <link name='sensor_link'>
         <inertial>
             <pose>0 0 0 0 -0 0</pose>
             <mass>0.01</mass>
