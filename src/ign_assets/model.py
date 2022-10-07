@@ -17,15 +17,10 @@ import os
 import subprocess
 
 from ament_index_python.packages import get_package_share_directory
-from ament_index_python.packages import PackageNotFoundError
 
-from launch.actions import IncludeLaunchDescription
-from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 
 import ign_assets.bridges
-import pathlib
-import shutil
 
 import yaml
 import json
@@ -67,10 +62,12 @@ def suction_gripper_models():
 
 class Model:
 
-    def __init__(self, model_name, model_type, position):
+    def __init__(self, model_name, model_type, n=0, position=[0, 0, 0, 0, 0, 0]):
         self.model_name = model_name
         self.model_type = model_type
+        self.n = n
         self.position = position
+        self.flight_time = 0
         self.battery_capacity = 0
         self.payload = {}
 
@@ -204,6 +201,7 @@ class Model:
 
     def set_flight_time(self, flight_time):
         # UAV specific, sets flight time
+        self.flight_time = float(flight_time)
 
         # calculate battery capacity from time
         # capacity (Ah) = flight time (in hours) * load (watts) / voltage
@@ -213,143 +211,62 @@ class Model:
     def set_payload(self, payload):
         self.payload = payload
 
-    # def generate(self):
-    #     # Generate SDF by executing ERB and populating templates
-    #     template_file = os.path.join(
-    #         get_package_share_directory('mbzirc_ign'),
-    #         'models', self.model_type, 'model.sdf.erb')
+    def generate(self):
+        # Generate SDF by executing JINJA and populating templates
 
-    #     model_dir = os.path.join(get_package_share_directory('mbzirc_ign'), 'models')
-    #     model_tmp_dir = os.path.join(model_dir, 'tmp')
+        # TODO: look for file in all IGN_GAZEBO_RESOURCE_PATH
+        model_dir = os.path.join(get_package_share_directory('ignition_assets'), 'models')
+        jinja_script = os.path.join(get_package_share_directory('ignition_assets'), 'scripts')
 
-    #     command = ['erb']
-    #     command.append(f'name={self.model_name}')
+        payload = ""
+        for sensor_name, sensor in self.payload.items():
+            if 'sensor' not in sensor:
+                continue
+            sensor_type = sensor['sensor']
 
-    #     for (slot, payload) in self.payload.items():
-    #         if payload['sensor'] and payload['sensor'] != 'None':
-    #             command.append(f"{slot}={payload['sensor']}")
-    #         if 'rpy' in payload:
-    #             if type(payload['rpy']) is str:
-    #                 r, p, y = payload['rpy'].split(' ')
-    #             else:
-    #                 r, p, y = payload['rpy']
-    #             command.append(f'{slot}_pos={r} {p} {y}')
+            x_s, y_s, z_s = 0, 0, 0
+            if 'xyz' in sensor:
+                x_s, y_s, z_s = sensor['xyz']
 
-    #     if self.model_type in UAVS:
-    #         if self.battery_capacity == 0:
-    #             raise RuntimeError('Battery Capacity is zero, was flight_time set?')
-    #         command.append(f'capacity={self.battery_capacity}')
-    #         if self.has_valid_gripper():
-    #             command.append(f'gripper={self.gripper}_{self.model_name}')
+            roll_s, pitch_s, yaw_s = 0, 0, 0
+            if 'rpy' in sensor:
+                roll_s, pitch_s, yaw_s = sensor['rpy']
 
-    #     if self.model_type in USVS or self.model_type == 'static_arm':
-    #         command.append(f'wavefieldSize={self.wavefield_size}')
+            payload += f"{sensor_name} {sensor_type} {x_s} {y_s} {z_s} {roll_s} {pitch_s} {yaw_s} "
 
-    #         # run erb for arm to attach the user specified gripper
-    #         # and also for arm and gripper to generate unique topic names
-    #         if self.has_valid_arm() or self.is_custom_model(self.arm):
-    #             command.append(f'arm={self.arm}')
-    #             command.append(f'arm_slot={self.arm_slot}')
-    #             arm_package = 'mbzirc_ign'
-    #             if self.is_custom_model(self.arm):
-    #                 arm_package = self.arm
-    #             arm_model_file = os.path.join(
-    #                 get_package_share_directory(arm_package), 'models',
-    #                 self.arm, 'model.sdf.erb')
-    #             arm_model_output_file = os.path.join(
-    #                 get_package_share_directory(arm_package), 'models',
-    #                 self.arm, 'model.sdf')
-    #             arm_command = ['erb']
+        command = ['python3', f'{jinja_script}/jinja_gen.py', f'{model_dir}/{self.model_type}/{self.model_type}.sdf.jinja', \
+            f'{model_dir}/..', '--namespace', f'{self.model_name}', '--sensors', f'{payload}', \
+            '--battery', f'{self.flight_time}', '--output-file', f'/tmp/{self.model_type}_{self.n}.sdf']
 
-    #             if self.gripper:
-    #                 arm_command.append(f'gripper={self.gripper}_{self.model_name}')
+        process = subprocess.Popen(command,
+                                   stdout=subprocess.PIPE,
+                                   stderr=subprocess.PIPE)
 
-    #             # arm payloads
-    #             for (slot, payload) in self.arm_payload.items():
-    #                 if payload['sensor'] and payload['sensor'] != 'None':
-    #                     arm_command.append(f"arm_{slot}={payload['sensor']}")
-    #                 if 'rpy' in payload:
-    #                     if type(payload['rpy']) is str:
-    #                         r, p, y = payload['rpy'].split(' ')
-    #                     else:
-    #                         r, p, y = payload['rpy']
-    #                     arm_command.append(f'arm_{slot}_pos={r} {p} {y}')
+        # evaluate error output to see if there were undefined variables
+        # for the JINJA process
+        stderr = process.communicate()[1]
+        err_output = codecs.getdecoder('unicode_escape')(stderr)[0]
+        for line in err_output.splitlines():
+            if line.find('undefined local') > 0:
+                raise RuntimeError(line)
 
-    #             arm_command.append(f'topic_prefix={self.model_name}')
-    #             arm_command.append(arm_model_file)
-    #             process = subprocess.Popen(arm_command, stdout=subprocess.PIPE)
-    #             stdout = process.communicate()[0]
-    #             str_output = codecs.getdecoder('unicode_escape')(stdout)[0]
-    #             with open(arm_model_output_file, 'w') as f:
-    #                 f.write(str_output)
-    #             # print(arm_command, str_output)
+        model_sdf = f"/tmp/{self.model_type}_{self.n}.sdf"
+        return command, model_sdf
 
-    #     if self.has_valid_gripper():
-    #         gripper_model_file = os.path.join(model_dir, self.gripper, 'model.sdf.erb')
-    #         gripper_model_output_file = os.path.join(model_tmp_dir,
-    #                                                  self.gripper + "_" + self.model_name,
-    #                                                  'model.sdf')
-    #         gripper_command = ['erb']
-    #         topic_prefix = f'{self.model_name}'
-    #         if (self.is_USV()):
-    #             topic_prefix += '/arm'
-    #         gripper_command.append(f'topic_prefix={topic_prefix}')
-    #         gripper_command.append(gripper_model_file)
+    def spawn_args(self, world_name, model_sdf=None):
+        if not model_sdf:
+            [command, model_sdf] = self.generate()
 
-    #         # create unique gripper model in mbzic_ign/models/tmp
-    #         # and symlink original model contents to new dir
-    #         output_dir = os.path.dirname(gripper_model_output_file)
-    #         if not os.path.exists(model_tmp_dir):
-    #             pathlib.Path(model_tmp_dir).mkdir(parents=True, exist_ok=True)
-    #         if os.path.exists(output_dir):
-    #             shutil.rmtree(output_dir)
-    #         pathlib.Path(output_dir).mkdir(parents=True, exist_ok=True)
-    #         meshes_dir = os.path.join(model_dir, self.gripper, 'meshes')
-    #         if os.path.exists(meshes_dir):
-    #             os.symlink(meshes_dir, os.path.join(output_dir, 'meshes'))
-    #         model_config = os.path.join(model_dir, self.gripper, 'model.config')
-    #         os.symlink(model_config, os.path.join(output_dir, 'model.config'))
-
-    #         # Ru erb to generate new model.sdf file
-    #         process = subprocess.Popen(gripper_command, stdout=subprocess.PIPE)
-    #         stdout = process.communicate()[0]
-    #         str_output = codecs.getdecoder('unicode_escape')(stdout)[0]
-    #         with open(gripper_model_output_file, 'w') as f:
-    #             f.write(str_output)
-    #         # print(gripper_command, str_output)
-
-    #     command.append(template_file)
-    #     process = subprocess.Popen(command,
-    #                                stdout=subprocess.PIPE,
-    #                                stderr=subprocess.PIPE)
-
-    #     # evaluate error output to see if there were undefined variables
-    #     # for the ERB process
-    #     stderr = process.communicate()[1]
-    #     err_output = codecs.getdecoder('unicode_escape')(stderr)[0]
-    #     for line in err_output.splitlines():
-    #         if line.find('undefined local') > 0:
-    #             raise RuntimeError(line)
-
-    #     stdout = process.communicate()[0]
-    #     model_sdf = codecs.getdecoder('unicode_escape')(stdout)[0]
-    #     print(command)
-
-    #     return command, model_sdf
-
-    # def spawn_args(self, model_sdf=None):
-        # if not model_sdf:
-        #     [command, model_sdf] = self.generate()
-
-        # return ['-string', model_sdf,
-        #         '-name', self.model_name,
-        #         '-allow_renaming', 'false',
-        #         '-x', str(self.position[0]),
-        #         '-y', str(self.position[1]),
-        #         '-z', str(self.position[2]),
-        #         '-R', str(self.position[3]),
-        #         '-P', str(self.position[4]),
-        #         '-Y', str(self.position[5])]
+        return ['-world', world_name,
+                '-file', model_sdf,
+                '-name', self.model_name,
+                '-allow_renaming', 'false',
+                '-x', str(self.position[0]),
+                '-y', str(self.position[1]),
+                '-z', str(self.position[2]),
+                '-R', str(self.position[3]),
+                '-P', str(self.position[4]),
+                '-Y', str(self.position[5])]
 
     @classmethod
     def FromConfig(cls, stream):
@@ -378,8 +295,8 @@ class Model:
     @classmethod
     def _FromConfigListJson(cls, config):
         ret = []
-        for entry in config['drones']:
-            ret.append(cls._FromConfigDictJson(entry))
+        for i, entry in enumerate(config['drones']):
+            ret.append(cls._FromConfigDictJson(entry, i))
         return ret
 
     @classmethod
@@ -413,7 +330,7 @@ class Model:
         return model
 
     @classmethod
-    def _FromConfigDictJson(cls, config):
+    def _FromConfigDictJson(cls, config, n=0):
         if 'model' not in config:
             raise RuntimeError('Cannot construct model without model in config')
         if 'name' not in config:
@@ -425,7 +342,7 @@ class Model:
             xyz = config['xyz']
         if 'rpy' in config:
             rpy = config['rpy']
-        model = cls(config['name'], config['model'], [*xyz, *rpy])
+        model = cls(config['name'], config['model'], n, [*xyz, *rpy])
 
         if 'flight_time' in config:
             model.set_flight_time(config['flight_time'])
