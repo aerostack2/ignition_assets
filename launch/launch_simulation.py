@@ -77,6 +77,14 @@ def spawn(world_name, models):
     return launch_processes
 
 
+def world_bridges():
+    world_bridges = IncludeLaunchDescription(
+    PythonLaunchDescriptionSource([os.path.join(
+        get_package_share_directory('ignition_assets'), 'launch'),
+        '/world_bridges.py']))
+    return [world_bridges] 
+
+
 def launch_simulation(context, *args, **kwargs):
     config_file = LaunchConfiguration('config_file').perform(context)
     headless = LaunchConfiguration('headless').perform(context)
@@ -99,6 +107,7 @@ def launch_simulation(context, *args, **kwargs):
 
     launch_processes.extend(simulation(world_name, headless, verbose, run_on_start))
     launch_processes.extend(spawn(world_name, models))
+    launch_processes.extend(world_bridges())
     return launch_processes
 
 
