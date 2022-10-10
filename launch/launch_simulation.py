@@ -31,9 +31,9 @@ def simulation(world_name, headless=False, verbose=False, run_on_start=True):
     # ros2 launch ros_ign_gazebo ign_gazebo.launch.py ign_args:="empty.sdf"
     ign_gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([os.path.join(
-            get_package_share_directory('ros_ign_gazebo'), 'launch'),
-            '/ign_gazebo.launch.py']),
-        launch_arguments={'ign_args': ' '.join(ign_args)}.items())
+            get_package_share_directory('ros_gz_sim'), 'launch'),
+            '/gz_sim.launch.py']),
+        launch_arguments={'gz_args': ' '.join(ign_args)}.items())
 
     # Register handler for shutting down ros launch when ign gazebo process exits
     # monitor_sim.py will run until it can not find the ign gazebo process.
@@ -67,7 +67,7 @@ def spawn(world_name, models):
     launch_processes = []
     for model in models:
         ignition_spawn_entity = Node(
-            package='ros_ign_gazebo',
+            package='ros_gz_sim',
             executable='create',
             output='screen',
             arguments=model.spawn_args(world_name)
@@ -76,6 +76,12 @@ def spawn(world_name, models):
 
     return launch_processes
 
+def world_bridges():
+    world_bridges = IncludeLaunchDescription(
+    PythonLaunchDescriptionSource([os.path.join(
+        get_package_share_directory('ignition_assets'), 'launch'),
+        '/world_bridges.py']))
+    return [world_bridges]
 
 def launch_simulation(context, *args, **kwargs):
     config_file = LaunchConfiguration('config_file').perform(context)
@@ -99,6 +105,7 @@ def launch_simulation(context, *args, **kwargs):
 
     launch_processes.extend(simulation(world_name, headless, verbose, run_on_start))
     launch_processes.extend(spawn(world_name, models))
+    launch_processes.extend(world_bridges())
     return launch_processes
 
 
