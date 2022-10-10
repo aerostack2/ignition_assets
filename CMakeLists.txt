@@ -125,5 +125,11 @@ install(DIRECTORY
   DESTINATION share/${PROJECT_NAME}
 )
 
-# ============================================================================
+install(DIRECTORY
+  scripts
+  DESTINATION share/${PROJECT_NAME}
+)
+
+#============================================================================
+
 ament_package()
