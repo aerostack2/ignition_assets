@@ -27,7 +27,7 @@ set(IGN_RENDERING_VER ${ignition-rendering6_VERSION_MAJOR})
 # find dependencies
 set(PROJECT_DEPENDENCIES
   ament_cmake
-  ros_ign_gazebo
+  ros_gz_sim
   ros_gz_bridge
 
   # CUSTOM BRIDGES
@@ -35,6 +35,8 @@ set(PROJECT_DEPENDENCIES
   as2_core
   sensor_msgs
   geometry_msgs
+  tf2_msgs
+  tf2_ros
 )
 
 foreach(DEPENDENCY ${PROJECT_DEPENDENCIES})

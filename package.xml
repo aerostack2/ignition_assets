@@ -10,8 +10,15 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
-  <depend>ros_ign_gazebo</depend>
+  <depend>ros_gz_sim</depend>
   <depend>ros_gz_bridge</depend>
+  <!-- CUSTOM BRIDGES -->
+  <depend>rclcpp</depend>
+  <depend>as2_core</depend>
+  <depend>sensor_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>tf2_msgs</depend>
+  <depend>tf2_ros</depend>
 
   <export>
     <build_type>ament_cmake</build_type>
