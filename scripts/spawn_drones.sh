@@ -100,7 +100,7 @@ function spawn_drone_model() {
     DIR_SCRIPT="${0%/*}"
     python3 ${DIR_SCRIPT}/jinja_gen.py ${modelpath}/${target}.jinja ${modelpath}/.. --namespace "${AEROSTACK2_SIMULATION_DRONE_ID::-1}${N}" --sensors "${sensors}" --output-file /tmp/${model}_${N}.sdf
 
-    ros2 run ros_ign_gazebo create -world ${world_name} -file /tmp/${model}_${N}.sdf -name ${AEROSTACK2_SIMULATION_DRONE_ID::-1}${N} -x $x -y $y -z $z -Y $Y
+    ros2 run ros_gz_sim create -world ${world_name} -file /tmp/${model}_${N}.sdf -name ${AEROSTACK2_SIMULATION_DRONE_ID::-1}${N} -x $x -y $y -z $z -Y $Y
 }
 
 function spawn_drones() {

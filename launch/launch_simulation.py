@@ -28,7 +28,7 @@ def simulation(world_name, headless=False, verbose=False, run_on_start=True):
     else:
         ign_args.append(f'{world_name}.sdf')
 
-    # ros2 launch ros_ign_gazebo ign_gazebo.launch.py ign_args:="empty.sdf"
+    # ros2 launch ros_gz_sim ign_gazebo.launch.py ign_args:="empty.sdf"
     ign_gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([os.path.join(
             get_package_share_directory('ros_gz_sim'), 'launch'),
@@ -63,7 +63,7 @@ def spawn(world_name, models):
     if type(models) != list:
         models = [models]
 
-    # ros2 run ros_ign_gazebo create -world ARG -file FILE 
+    # ros2 run ros_gz_sim create -world ARG -file FILE 
     launch_processes = []
     for model in models:
         ignition_spawn_entity = Node(

@@ -177,7 +177,7 @@ def gripper_suction_contacts(model_name):
         ign_topic=f'/{model_name}/{prefix}/contact',
         ros_topic='sensor_measurements/{prefix}/contact',
         ign_type='ignition.msgs.Contacts',
-        ros_type='ros_ign_interfaces/msg/Contacts',
+        ros_type='ros_gz_interfaces/msg/Contacts',
         direction=BridgeDirection.IGN_TO_ROS
     )
 
