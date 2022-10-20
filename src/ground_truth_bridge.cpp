@@ -2,6 +2,9 @@
 #include <memory>
 #include <string>
 
+#include "rclcpp/publisher.hpp"
+#include "rclcpp/rclcpp.hpp"
+
 #include <as2_core/names/topics.hpp>
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "geometry_msgs/msg/twist_stamped.hpp"
@@ -27,10 +30,10 @@ public:
     std::string ground_truth_topic = "/model/" + model_name_ + "/odometry";
     ign_node_ptr_->Subscribe(ground_truth_topic, this->ignitionGroundTruthCallback);
 
-    ps_pub_ = this->create_publisher<geometry_msgs::msg::PoseStamped>("ground_truth/pose",
-                                                                      rclcpp::SensorDataQoS());
-    ts_pub_ = this->create_publisher<geometry_msgs::msg::TwistStamped>("ground_truth/twist",
-                                                                       rclcpp::SensorDataQoS());
+    ps_pub_ = this->create_publisher<geometry_msgs::msg::PoseStamped>(
+        as2_names::topics::ground_truth::pose, as2_names::topics::ground_truth::qos);
+    ts_pub_ = this->create_publisher<geometry_msgs::msg::TwistStamped>(
+        as2_names::topics::ground_truth::twist, as2_names::topics::ground_truth::qos);
   }
 
 private:
@@ -92,8 +95,8 @@ private:
 
 rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr GroundTruthBridge::ps_pub_  = nullptr;
 rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr GroundTruthBridge::ts_pub_ = nullptr;
-std::string GroundTruthBridge::pose_frame_id_ = "";
-std::string GroundTruthBridge::twist_frame_id_ = "";
+std::string GroundTruthBridge::pose_frame_id_                                             = "";
+std::string GroundTruthBridge::twist_frame_id_                                            = "";
 
 int main(int argc, char *argv[]) {
   rclcpp::init(argc, argv);

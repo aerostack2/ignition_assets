@@ -31,6 +31,8 @@ UAVS = [
     'quadrotor'
 ]
 
+
+# TODO: semantic_camera segmentation
 def camera_models():
     models = ['vga_camera',
               'hd_camera',
@@ -43,9 +45,10 @@ def rgbd_models():
     return models
 
 
+# FIXME: point_lidar scan not working properly
 def lidar_models():
     models = ['planar_lidar',
-              '3d_lidar',
+              'lidar_3d',
               'point_lidar']
     return models
 
@@ -77,12 +80,12 @@ class Model:
     def bridges(self, world_name):
         bridges = [
             # IMU
-            ign_assets.bridges.imu(world_name, self.model_name, 'imu'),
+            ign_assets.bridges.imu(world_name, self.model_name, 'imu', 'internal'),
             # Magnetometer
-            ign_assets.bridges.magnetometer(world_name, self.model_name, 'magnetometer'),
+            ign_assets.bridges.magnetometer(world_name, self.model_name, 'magnetometer', 'internal'),
             # Air Pressure
-            ign_assets.bridges.air_pressure(world_name, self.model_name, 'air_pressure'),
-            # # FIXME: temporal odom
+            ign_assets.bridges.air_pressure(world_name, self.model_name, 'air_pressure', 'internal'),
+            # odom: not used, use ground_truth instead
             # ign_assets.bridges.odom(self.model_name),
             # pose
             ign_assets.bridges.pose(self.model_name),
@@ -132,7 +135,7 @@ class Model:
     def payload_bridges(self, world_name, payloads=None):
         if not payloads:
             payloads = self.payload
-        
+
         bridges = []
         nodes = []
         for k in payloads.keys():
@@ -156,24 +159,26 @@ class Model:
         nodes = []
         if payload in camera_models():
             bridges = [
-                ign_assets.bridges.image(world_name, model_name, sensor_name, model_prefix),
-                ign_assets.bridges.camera_info(world_name, model_name, sensor_name, model_prefix)
+                ign_assets.bridges.image(world_name, model_name, sensor_name,
+                                         payload, model_prefix),
+                ign_assets.bridges.camera_info(world_name, model_name,
+                                               sensor_name, payload, model_prefix)
             ]
         elif payload in lidar_models():
             bridges = [
-                ign_assets.bridges.lidar_scan(world_name, model_name, sensor_name, model_prefix),
-                ign_assets.bridges.lidar_points(world_name, model_name, sensor_name, model_prefix)
+                ign_assets.bridges.lidar_scan(world_name, model_name, sensor_name, payload, model_prefix),
+                ign_assets.bridges.lidar_points(world_name, model_name, sensor_name, payload, model_prefix)
             ]
         elif payload in rgbd_models():
             bridges = [
-                ign_assets.bridges.image(world_name, model_name, sensor_name, model_prefix),
-                ign_assets.bridges.camera_info(world_name, model_name, sensor_name, model_prefix),
-                ign_assets.bridges.depth_image(world_name, model_name, sensor_name, model_prefix),
-                ign_assets.bridges.camera_points(world_name, model_name, sensor_name, model_prefix)
+                ign_assets.bridges.image(world_name, model_name, sensor_name, payload, model_prefix),
+                ign_assets.bridges.camera_info(world_name, model_name, sensor_name, payload, model_prefix),
+                ign_assets.bridges.depth_image(world_name, model_name, sensor_name, payload, model_prefix),
+                ign_assets.bridges.camera_points(world_name, model_name, sensor_name, payload, model_prefix)
             ]
         elif payload in gps_models():
             # bridges = [
-            #     ign_assets.bridges.navsat(world_name, model_name, sensor_name, model_prefix)
+            #     ign_assets.bridges.navsat(world_name, model_name, sensor_name, payload, model_prefix)
             # ]
             nodes.append(Node(
                 package='ignition_assets',
@@ -184,8 +189,8 @@ class Model:
                     {'world_name': world_name,
                      'name_space': model_name,
                      'sensor_name': sensor_name,
-                     'link_name': 'sensor_link',
-                     'sensor_type': 'gps'}
+                     'link_name': payload,
+                     'sensor_type': 'navsat'}
                 ]
             ))
         elif payload in suction_gripper_models():

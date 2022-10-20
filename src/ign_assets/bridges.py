@@ -1,8 +1,8 @@
 from ign_assets.bridge import Bridge, BridgeDirection
 
 
-def prefix(world_name, model_name, link_name):
-    return f'/world/{world_name}/model/{model_name}/link/{link_name}/sensor'
+def prefix(world_name, model_name, model_sensor_name, link_name='sensor_link'):
+    return f'/world/{world_name}/model/{model_name}/model/{model_sensor_name}/link/{link_name}/sensor'
 
 
 def clock():
@@ -14,18 +14,18 @@ def clock():
         direction=BridgeDirection.IGN_TO_ROS)
 
 
-def imu(world_name, model_name, link_name='base_link'):
-    sensor_prefix = prefix(world_name, model_name, link_name)
+def imu(world_name, model_name, sensor_name, link_name, model_prefix=''):
+    sensor_prefix = prefix(world_name, model_name, sensor_name, link_name)
     return Bridge(
-        ign_topic=f'{sensor_prefix}/imu_sensor/imu',
+        ign_topic=f'{sensor_prefix}/imu/imu',
         ros_topic='sensor_measurements/imu',
         ign_type='ignition.msgs.IMU',
         ros_type='sensor_msgs/msg/Imu',
         direction=BridgeDirection.IGN_TO_ROS)
 
 
-def magnetometer(world_name, model_name, link_name='base_link'):
-    sensor_prefix = prefix(world_name, model_name, link_name)
+def magnetometer(world_name, model_name, sensor_name, link_name, model_prefix=''):
+    sensor_prefix = prefix(world_name, model_name, sensor_name, link_name)
     return Bridge(
         ign_topic=f'{sensor_prefix}/magnetometer/magnetometer',
         ros_topic='sensor_measurements/magnetic_field',
@@ -34,8 +34,8 @@ def magnetometer(world_name, model_name, link_name='base_link'):
         direction=BridgeDirection.IGN_TO_ROS)
 
 
-def air_pressure(world_name, model_name, link_name='base_link'):
-    sensor_prefix = prefix(world_name, model_name, link_name)
+def air_pressure(world_name, model_name, sensor_name, link_name, model_prefix=''):
+    sensor_prefix = prefix(world_name, model_name, sensor_name, link_name)
     return Bridge(
         ign_topic=f'{sensor_prefix}/air_pressure/air_pressure',
         ros_topic='sensor_measurements/air_pressure',
@@ -101,70 +101,71 @@ def battery(model_name):
         direction=BridgeDirection.IGN_TO_ROS)
 
 
-def image(world_name, model_name, sensor_name, model_prefix=''):
-    prefix = f'/world/{world_name}/model/{model_name}/model/{sensor_name}/link/sensor_link/sensor'
+def image(world_name, model_name, sensor_name, sensor_type, model_prefix=''):
+    sensor_prefix = prefix(world_name, model_name, sensor_name, sensor_type)
     return Bridge(
-        ign_topic=f'{prefix}/camera/image',
+        ign_topic=f'{sensor_prefix}/camera/image',
         ros_topic=f'sensor_measurements/{model_prefix}/image_raw',
         ign_type='ignition.msgs.Image',
         ros_type='sensor_msgs/msg/Image',
         direction=BridgeDirection.IGN_TO_ROS)
 
 
-def depth_image(world_name, model_name, sensor_name, model_prefix=''):
-    prefix = f'/world/{world_name}/model/{model_name}/model/{sensor_name}/link/sensor_link/sensor'
+def depth_image(world_name, model_name, sensor_name, sensor_type, model_prefix=''):
+    sensor_prefix = prefix(world_name, model_name, sensor_name, sensor_type)
     return Bridge(
-        ign_topic=f'{prefix}/camera/depth_image',
+        ign_topic=f'{sensor_prefix}/camera/depth_image',
         ros_topic=f'sensor_measurements/{model_prefix}/depth',
         ign_type='ignition.msgs.Image',
         ros_type='sensor_msgs/msg/Image',
         direction=BridgeDirection.IGN_TO_ROS)
 
 
-def camera_info(world_name, model_name, sensor_name, model_prefix=''):
-    prefix = f'/world/{world_name}/model/{model_name}/model/{sensor_name}/link/sensor_link/sensor'
+def camera_info(world_name, model_name, sensor_name, sensor_type, model_prefix=''):
+    sensor_prefix = prefix(world_name, model_name, sensor_name, sensor_type)
     return Bridge(
-        ign_topic=f'{prefix}/camera/camera_info',
+        ign_topic=f'{sensor_prefix}/camera/camera_info',
         ros_topic=f'sensor_measurements/{model_prefix}/camera_info',
         ign_type='ignition.msgs.CameraInfo',
         ros_type='sensor_msgs/msg/CameraInfo',
         direction=BridgeDirection.IGN_TO_ROS)
 
 
-def lidar_scan(world_name, model_name, sensor_name, model_prefix=''):
-    prefix = f'/world/{world_name}/model/{model_name}/model/{sensor_name}/link/sensor_link/sensor'
+def lidar_scan(world_name, model_name, sensor_name, sensor_type, model_prefix=''):
+    sensor_prefix = prefix(world_name, model_name, sensor_name, sensor_type)
     return Bridge(
-        ign_topic=f'{prefix}/lidar/scan',
+        ign_topic=f'{sensor_prefix}/gpu_ray/scan',
         ros_topic=f'sensor_measurements/{model_prefix}/scan',
         ign_type='ignition.msgs.LaserScan',
         ros_type='sensor_msgs/msg/LaserScan',
         direction=BridgeDirection.IGN_TO_ROS)
 
 
-def lidar_points(world_name, model_name, sensor_name, model_prefix=''):
-    prefix = f'/world/{world_name}/model/{model_name}/model/{sensor_name}/link/sensor_link/sensor'
+def lidar_points(world_name, model_name, sensor_name, sensor_type, model_prefix=''):
+    sensor_prefix = prefix(world_name, model_name, sensor_name, sensor_type)
     return Bridge(
-        ign_topic=f'{prefix}/lidar/scan/points',
+        ign_topic=f'{sensor_prefix}/gpu_ray/scan/points',
         ros_topic=f'sensor_measurements/{model_prefix}/points',
         ign_type='ignition.msgs.PointCloudPacked',
         ros_type='sensor_msgs/msg/PointCloud2',
         direction=BridgeDirection.IGN_TO_ROS)
 
 
-def camera_points(world_name, model_name, sensor_name, model_prefix=''):
-    prefix = f'/world/{world_name}/model/{model_name}/model/{sensor_name}/link/sensor_link/sensor'
+def camera_points(world_name, model_name, sensor_name, sensor_type, model_prefix=''):
+    sensor_prefix = prefix(world_name, model_name, sensor_name, sensor_type)
     return Bridge(
-        ign_topic=f'{prefix}/camera/points',
+        ign_topic=f'{sensor_prefix}/camera/points',
         ros_topic=f'sensor_measurements/{model_prefix}/points',
         ign_type='ignition.msgs.PointCloudPacked',
         ros_type='sensor_msgs/msg/PointCloud2',
         direction=BridgeDirection.IGN_TO_ROS)
 
 
-def navsat(world_name, model_name, sensor_name, model_prefix=''):
-    prefix = f'/world/{world_name}/model/{model_name}/model/{sensor_name}/link/sensor_link/sensor'
+# NOT USED; BRIDGE NOT SUPPORTED IN FORTRESS
+def navsat(world_name, model_name, sensor_name, sensor_type, model_prefix=''):
+    sensor_prefix = prefix(world_name, model_name, sensor_name, sensor_type)
     return Bridge(
-        ign_topic=f'{prefix}/gps/navsat',
+        ign_topic=f'{sensor_prefix}/navsat/navsat',
         ros_topic=f'sensor_measurements/{model_prefix}/gps',
         ign_type='ignition.msgs.NavSat',
         ros_type='sensor_msgs/msg/NavSatFix',

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <sdf version="1.9">
     <model name="rgbd_camera">
-        <link name="sensor_link">
+        <link name="rgbd_camera">
             <inertial>
                 <mass>0.005</mass>
                 <inertia>

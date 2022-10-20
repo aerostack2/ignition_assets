@@ -33,9 +33,8 @@ public:
                             sensor_name + "/link/" + link_name + "/sensor/" + sensor_type +
                             "/navsat";
     ign_node_ptr_->Subscribe(gps_topic, this->ignitionGPSCallback);
-
-    gps_pub_ = this->create_publisher<sensor_msgs::msg::NavSatFix>("sensor_measurement/gps",
-                                                                   rclcpp::SensorDataQoS());
+    gps_pub_ = this->create_publisher<sensor_msgs::msg::NavSatFix>(
+        as2_names::topics::sensor_measurements::gps, as2_names::topics::sensor_measurements::qos);
   }
 
 private:

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <sdf version="1.9">
     <model name="semantic_camera">
-      <link name="sensor_link">
+      <link name="semantic_camera">
         <pose>0 0 0 0 0 0</pose>
         <inertial>
           <mass>0.005</mass>
@@ -11,7 +11,7 @@
             <izz>0.000166667</izz>
           </inertia>
         </inertial>
-        <sensor name="semantic_segmentation_camera" type="segmentation">
+        <sensor name="segmentation" type="segmentation">
           <!-- <topic>semantic</topic> -->
           <camera name="camera">
             <segmentation_type>instance</segmentation_type>

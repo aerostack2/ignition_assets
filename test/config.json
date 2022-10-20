@@ -13,7 +13,7 @@
                 "xyz": [0.1, 0.2, 0.3]
             },
             "lidar_0": {
-                "sensor": "3d_lidar",
+                "sensor": "lidar_3d",
                 "rpy": [ 0.0, 0.0, 0.0 ]
             }
         }
