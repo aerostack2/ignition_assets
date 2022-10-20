@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <sdf version="1.9">
   <model name="point_lidar">
-    <link name="sensor_link">
+    <link name="point_lidar">
       <inertial>
         <mass>0.005</mass>
         <inertia>
@@ -13,7 +13,7 @@
           <izz>8.33e-06</izz>
         </inertia>
       </inertial>
-      <sensor name="lidar" type="gpu_ray">
+      <sensor name="gpu_ray" type="gpu_ray">
         <update_rate>20</update_rate>
         <lidar>
           <scan>
